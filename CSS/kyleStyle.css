@@ -1,0 +1,27 @@
+/* Organizational Elements */
+.wrapper {
+    position:relative;
+    width:10%;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+/* UI Elements */
+.button1 {
+    font-family:Arial;
+    font-weight:Bold;
+    font-size:20px;
+    color:#FFF;
+    background-color:#0099FF;
+    border: none;
+    width:100px;
+    height: 40px;
+    box-shadow: 1px 1px 1px #888888;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+
+.button1:active {
+    background-color:#33CCFF;
+}
