@@ -8,10 +8,10 @@
   </head>
   <body>
 	<div class="wrapper">
-	    <form action="php/Test.php" method="post">
+	    <form style="padding:5px; float:left;" action="php/Test.php" method="post">
     		<input class="button1 " type="submit" name="Button1" value="On">
 	    </form>
-	    <form action="php/Test2.php" method="post">
+	    <form style="padding:5px; float:right;" action="php/Test2.php" method="post">
     		<input class="button1 " type="submit" name="Button1" value="Off">
 	    </form>
 	</div>
