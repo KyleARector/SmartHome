@@ -12,15 +12,15 @@ sc = SlackClient(config["slack"]["access_token"])
 
 if sc.rtm_connect():
     while True:
-        conv = sc.rtm_read()
-	for item in conv:
-	    if "type" in item and item["type"] == "message":
+        chat = sc.rtm_read()
+        for item in chat:
+            if "type" in item and item["type"] == "message":
                 if "gas" in item["text"] or "fuel" in item["text"]:
                     if "Ford" in item["text"]:
-                    	cost = auto.get_fuel_cost("Ford")
-		    	message = "It would cost " + cost + " to fill up right now"
+                        cost = auto.get_fuel_cost("Ford")
+                        message = "It would cost " + cost + " to fill up right now"
                         sc.rtm_send_message(item["channel"], message)
-		    elif "Mazda" in item["text"]:
+                    elif "Mazda" in item["text"]:
                         cost = auto.get_fuel_cost("Mazda")
                         message = "It would cost " + cost + " to fill up right now"
                         sc.rtm_send_message(item["channel"], message)
