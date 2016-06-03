@@ -4,15 +4,14 @@ from BeautifulSoup import BeautifulSoup
 
 
 class AutomaticInterface(object):
-    def __init__(self, config, mappings):
+    def __init__(self, config):
         self.config = config
-        self.mappings = mappings
 
     def get_fuel_cost(self, car_name):
         cost = "No cars found with name " + car_name
         car_id = ""
         car_num = 0
-        for car in self.mappings["cars"]:
+        for car in self.config["cars"]:
             if car["display_name"] == car_name:
                 car_id = car["id"]
                 break
@@ -27,7 +26,7 @@ class AutomaticInterface(object):
                 headers = {'Authorization': "Bearer " + self.config["access_token"]}
                 req = requests.get(self.config["url"] + car_id, headers=headers)
                 data = req.json()
-            tank_size = (float(self.mappings["cars"][car_num]["tank_size"]))
+            tank_size = (float(self.config["cars"][car_num]["tank_size"]))
             gal_of_fuel = (tank_size * float(data["fuel_level_percent"]))/100
             empty_vol = tank_size - gal_of_fuel
             req = requests.get("http://www.fueleconomy.gov/ws/rest/fuelprices")
@@ -62,18 +61,13 @@ class AutomaticInterface(object):
 
 
 def main():
-    infile = open("mappings.json", "r")
-    mappings = json.load(infile)
-    infile.close()
-
     infile = open("config.json", "r")
     config = json.load(infile)
     infile.close()
 
-    mappings = mappings["automatic"]
     config = config["automatic"]
 
-    test = AutomaticInterface(config, mappings)
+    test = AutomaticInterface(config)
     car = raw_input("Try a vehicle: ")
     out = test.get_fuel_cost(car)
     print out

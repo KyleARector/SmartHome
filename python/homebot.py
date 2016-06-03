@@ -3,19 +3,14 @@ import json
 from slackclient import SlackClient
 from automatic import AutomaticInterface
 from smartthings import SmartThingsInterface
-from langinterface import LanguageInterface
+# from langinterface import LanguageInterface
 
 infile = open("config.json", "r")
 config = json.load(infile)
 infile.close()
 
-# No point to mappings file anymore, going to consolidate data into config
-infile = open("mappings.json", "r")
-mappings = json.load(infile)
-infile.close()
-
 slack = SlackClient(config["slack"]["access_token"])
-auto = AutomaticInterface(config["automatic"], mappings["automatic"])
+auto = AutomaticInterface(config["automatic"])
 smartthing = SmartThingsInterface(config["smartthings"])
 
 if slack.rtm_connect():
@@ -34,12 +29,12 @@ if slack.rtm_connect():
                         slack.rtm_send_message(item["channel"], message)
                 elif "hey" in item["text"] or "hello" in item["text"]:
                     slack.rtm_send_message(item["channel"], "Hello! How are you?")
-                elif "home" in item["text"] and status in item["text"]:
+                elif "home" in item["text"] and "status" in item["text"]:
                     sensor_data = smartthing.get()
                     message = ""
                     for sensor in sensor_data:
                         message += sensor["name"] + " is " + sensor["value"] + "\n"
-
+                    slack.rtm_send_message(item["channel"], message)
         time.sleep(1)
 else:
     print "Connection Failed, invalid token?"

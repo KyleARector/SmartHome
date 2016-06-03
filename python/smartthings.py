@@ -8,7 +8,7 @@ class SmartThingsInterface(object):
     def get(self):
         endpt = "/sensors"
         headers = {'Authorization': "Bearer " + self.config["access_token"]}
-        req = requests.get(config["url"] + endpt, headers=headers)
+        req = requests.get(self.config["url"] + endpt, headers=headers)
         data = req.json()
         return data
 
@@ -16,6 +16,6 @@ class SmartThingsInterface(object):
         endpt = "/sensors"
         headers = {'Authorization': "Bearer " + self.config["access_token"]}
         payload = {"device": device, "command": command}
-        req = requests.post(config["url"] + endpt, headers=headers, json=payload)
+        req = requests.post(self.config["url"] + endpt, headers=headers, json=payload)
         data = req.json()
         return data
