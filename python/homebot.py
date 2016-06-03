@@ -2,30 +2,44 @@ import time
 import json
 from slackclient import SlackClient
 from automatic import AutomaticInterface
+from smartthings import SmartThingsInterface
+from langinterface import LanguageInterface
 
 infile = open("config.json", "r")
 config = json.load(infile)
 infile.close()
 
-auto = AutomaticInterface()
-sc = SlackClient(config["slack"]["access_token"])
+# No point to mappings file anymore, going to consolidate data into config
+infile = open("mappings.json", "r")
+mappings = json.load(infile)
+infile.close()
 
-if sc.rtm_connect():
+slack = SlackClient(config["slack"]["access_token"])
+auto = AutomaticInterface(config["automatic"], mappings["automatic"])
+smartthing = SmartThingsInterface(config["smartthings"])
+
+if slack.rtm_connect():
     while True:
-        chat = sc.rtm_read()
+        chat = slack.rtm_read()
         for item in chat:
             if "type" in item and item["type"] == "message":
                 if "gas" in item["text"] or "fuel" in item["text"]:
                     if "Ford" in item["text"]:
                         cost = auto.get_fuel_cost("Ford")
                         message = "It would cost " + cost + " to fill up right now"
-                        sc.rtm_send_message(item["channel"], message)
+                        slack.rtm_send_message(item["channel"], message)
                     elif "Mazda" in item["text"]:
                         cost = auto.get_fuel_cost("Mazda")
                         message = "It would cost " + cost + " to fill up right now"
-                        sc.rtm_send_message(item["channel"], message)
+                        slack.rtm_send_message(item["channel"], message)
                 elif "hey" in item["text"] or "hello" in item["text"]:
-                    sc.rtm_send_message(item["channel"], "Hello! How are you?")
+                    slack.rtm_send_message(item["channel"], "Hello! How are you?")
+                elif "home" in item["text"] and status in item["text"]:
+                    sensor_data = smartthing.get()
+                    message = ""
+                    for sensor in sensor_data:
+                        message += sensor["name"] + " is " + sensor["value"] + "\n"
+
         time.sleep(1)
 else:
     print "Connection Failed, invalid token?"

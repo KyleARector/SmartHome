@@ -1,0 +1,8 @@
+{"basics": [
+	{"type":"greetings", "values": ["hey", "hello", "what's up", "whats up", "good morning", "good afternoon","good evening"]},
+        {"type": "auto", "values": ["gas", "fuel", "car"]}
+	],
+ "responses": [
+
+	]
+}
