@@ -32,13 +32,14 @@ class AutomaticInterface(object):
                 headers = {'Authorization': "Bearer " + self.config["automatic"]["access_token"]}
                 req = requests.get(self.config["automatic"]["url"] + car_id, headers=headers)
                 data = req.json()
-            gal_of_fuel = (float(self.mappings["automatic"]["cars"][car_num]["tank_size"]))
-            gal_of_fuel = (gal_of_fuel * float(data["fuel_level_percent"]))/100
-            empty_vol = float(self.mappings["automatic"]["cars"][0]["tank_size"]) - gal_of_fuel
-            req = requests.get("http://fuelgaugereport.aaa.com/import/currentav/display.php?lt=national&ls=US")
-            # Need error checking
+            tank_size = (float(self.mappings["automatic"]["cars"][car_num]["tank_size"]))
+            gal_of_fuel = (tank_size * float(data["fuel_level_percent"]))/100
+	    empty_vol = tank_size - gal_of_fuel
+            #req = requests.get("http://fuelgaugereport.aaa.com/import/currentav/display.php?lt=national&ls=US")
+            req = requests.get("http://www.fueleconomy.gov/ws/rest/fuelprices")
+	    # Need error checking
             parsed = BeautifulSoup(req.text)
-            price = parsed.find("font").text
+            price = parsed.find("regular").text
             price = float(price.replace("$", ""))
             cost = "$" + str(round(price * empty_vol, 2))
         return cost
