@@ -1,8 +1,7 @@
-{"basics": [
-	{"type":"greetings", "values": ["hey", "hello", "what's up", "whats up", "good morning", "good afternoon","good evening"]},
-        {"type": "auto", "values": ["gas", "fuel", "car"]}
-	],
- "responses": [
-
-	]
+{"topics": [
+        {"topic": "greetings", "keywords": ["hey", "hello", "what's up", "whats up", "good morning", "good afternoon","good evening"], "subjects": ["morning", "afternoon", "evening", "night"], "activities": ["greet"]},
+        {"topic": "auto", "keywords": ["gas", "fuel", "car", "fill", "fill up"], "subjects": ["ford", "mazda"], "activities": ["gas_query"]},
+        {"topic": "home", "keywords": ["home"], "subjects": ["status"], "activities": ["status_query"]},
+        {"topic": "control", "keywords": ["turn", "set", "make"], "subjects": ["sphere", "computer", "plex"], "activities": ["on", "off", "red", "green", "blue", "yellow", "magenta", "cyan", "white"]}
+    ]
 }
