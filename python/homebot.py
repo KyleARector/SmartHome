@@ -20,12 +20,14 @@ if slack.rtm_connect():
             if "type" in item and item["type"] == "message":
                 if "gas" in item["text"] or "fuel" in item["text"]:
                     if "Ford" in item["text"]:
-                        cost = auto.get_fuel_cost("Ford")
-                        message = "It would cost " + cost + " to fill up right now"
+                        auto_data = auto.get_fuel_cost("Ford")
+                        message = "It would cost " + auto_data["cost"] + " to fill up " + auto_data["empty_vol"] + \
+                                  "gallons"
                         slack.rtm_send_message(item["channel"], message)
                     elif "Mazda" in item["text"]:
-                        cost = auto.get_fuel_cost("Mazda")
-                        message = "It would cost " + cost + " to fill up right now"
+                        auto_data = auto.get_fuel_cost("Mazda")
+                        message = "It would cost " + auto_data["cost"] + " to fill up " + auto_data["empty_vol"] + \
+                                  "gallons"
                         slack.rtm_send_message(item["channel"], message)
                 elif "hey" in item["text"] or "hello" in item["text"]:
                     slack.rtm_send_message(item["channel"], "Hello! How are you?")

@@ -9,6 +9,7 @@ class AutomaticInterface(object):
 
     def get_fuel_cost(self, car_name):
         cost = "No cars found with name " + car_name
+        return_vals = {"cost": cost, "empty_vol": "0"}
         car_id = ""
         car_num = 0
         for car in self.config["cars"]:
@@ -35,7 +36,9 @@ class AutomaticInterface(object):
             price = parsed.find("regular").text
             price = float(price.replace("$", ""))
             cost = "$" + str(round(price * empty_vol, 2))
-        return cost
+            empty_vol = round(empty_vol, 2)
+            return_vals = {"cost": cost, "empty_vol": empty_vol}
+        return return_vals
 
     def refresh_access_token(self):
         url = "https://accounts.automatic.com/oauth/access_token/"
