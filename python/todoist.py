@@ -14,12 +14,12 @@ class TodoistInterface(object):
         req = requests.get("https://todoist.com/API/v7/sync", data=data)
         data = req.json()
         for item in data["items"]:
-            if item["project_id"] == self.config["project_id"]:
+            if str(item["project_id"]) == self.config["project_id"]:
                 if str(item["due_date_utc"]) != "None":
-                    test_date = item["due_date_utc"]
-                    test_date = test_date.replace(" +0000", "")
-                    date_object = datetime.datetime.strptime(test_date, '%a %d %b %Y %H:%M:%S')
-                    date_object = date_object - datetime.timedelta(hours=6)
-                    if datetime.datetime.now().date() == date_object.date():
+                    task_date = item["due_date_utc"]
+                    task_date = task_date.replace(" +0000", "")
+                    task_datetime = datetime.datetime.strptime(task_date, '%a %d %b %Y %H:%M:%S')
+                    task_datetime = task_datetime - datetime.timedelta(hours=6)
+                    if datetime.datetime.now().date() == task_datetime.date():
                         return_vals.append(item["content"])
         return return_vals
