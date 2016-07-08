@@ -57,6 +57,9 @@ void setup()
   // Start server
   server.begin();
   
+  // Do not broadcast AP
+  WiFi.mode(WIFI_STA);
+  
   // Start sensors
   sensors.begin();
   sensors.setResolution(insideTemp, 10);
