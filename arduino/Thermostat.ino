@@ -35,6 +35,8 @@ void setup() {
   Serial.println("WiFi connected");
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
+  // Do not broadcast AP
+  WiFi.mode(WIFI_STA);
 }
 
 void controlRelay(int pin, int quantity) {
