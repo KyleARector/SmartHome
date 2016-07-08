@@ -49,6 +49,8 @@ void setup(void)
 
   // Print the IP address
   Serial.println(WiFi.localIP());
+  // Do not broadcast AP
+  WiFi.mode(WIFI_STA);
 }
 
 void loop() {
