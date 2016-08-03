@@ -6,16 +6,19 @@ from openzwave.controller import ZWaveController
 from openzwave.network import ZWaveNetwork
 from openzwave.option import ZWaveOption
 import time
+import redis
+import json
 
 
 class ZStickInterface(object):
     def __init__(self):
+        self.sensor_list = []
         self.device = "/dev/ttyACM0"
         # If using older Z-sticks, use the below device:
         # self.device = "/dev/ttyUSB0"
         # Change config paths where appropriate
-        self.options = ZWaveOption(self.device, config_path="/home/pi/Dev/plugins/python-openzwave/openzwave/config",
-                                   user_path="/home/pi/Dev/plugins/python-openzwave/config", cmd_line="")
+        self.options = ZWaveOption(self.device, config_path="plugins/python-openzwave/openzwave/config",
+                                   user_path="plugins/python-openzwave/config", cmd_line="")
         # Turn off ozw console output
         self.options.set_console_output(False)
         self.options.set_save_log_level("Info")
@@ -40,12 +43,16 @@ class ZStickInterface(object):
         except:
             print("Invalid node id")
 
-    def get_node_by_name(self, name):
-        node_id = 0
-        for node in self.network.nodes:
-            if node.name == name:
-                node_id = node.node_id
-        return node_id
+    def switch(self, node_id, state):
+        try:
+            in_work_node = self.network.nodes[node_id]
+            switch_val = in_work_node.get_switches().keys()[0]
+            if state == "False":
+                in_work_node.set_switch(switch_val, False)
+            else:
+                in_work_node.set_switch(switch_val, True)
+        except:
+            print("Invalid node id")
 
     def stop_network(self):
         self.network.stop()
@@ -53,9 +60,27 @@ class ZStickInterface(object):
 
 def main():
     zstick = ZStickInterface()
+    db = redis.StrictRedis(host='localhost', port=4747, db=0)
+
+    size = db.llen("sensors")
+    for index in range(0, size):
+        sensor = json.loads(db.lindex("sensors", index))
+        if sensor["type"] == "zwave":
+            data = {"name": sensor["name"], "node_id": sensor["node_id"]}
+            zstick.sensor_list.append(data)
+
     while True:
-        node_id = raw_input("Enter a node id: ")
-        zstick.toggle_switch(int(node_id))
+        size = db.llen("sensor_changes")
+        if size > 0:
+            for index in range(0, size):
+                sensor = json.loads(db.lindex("sensor_changes", index))
+                for known_sensor in zstick.sensor_list:
+                    if sensor["name"] == known_sensor["name"]:
+                        db.lrem("sensor_changes", 1, db.lindex("sensor_changes", index))
+                        zstick.switch(known_sensor["node_id"], sensor["state"])
+                        db.set(sensor["name"], sensor["state"])
+                        break
+
     zstick.stop_network()
 
 if __name__ == '__main__':
