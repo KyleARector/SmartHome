@@ -110,6 +110,12 @@ if slack.rtm_connect():
                         for task in task_list:
                             message += " - " + task + "\n"
                     slack.rtm_send_message(item["channel"], message)
+                elif "3d printer" in item["text"].lower():
+                    if "on" in item["text"].lower():
+                        command = "True"
+                    else:
+                        command = "False"
+                    db.lpush("sensor_changes", "{\"name\": \"3D Printer\", \"state\": \"" + command + "\"}")
         # Check for notifications
         if db.llen("notifications") > 0:
             message = ""
