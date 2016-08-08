@@ -12,7 +12,6 @@ import json
 
 class ZStickInterface(object):
     def __init__(self):
-        self.sensor_list = []
         self.device = "/dev/ttyACM0"
         # If using older Z-sticks, use the below device:
         # self.device = "/dev/ttyUSB0"
@@ -60,27 +59,6 @@ class ZStickInterface(object):
 
 def main():
     zstick = ZStickInterface()
-    db = redis.StrictRedis(host='localhost', port=4747, db=0)
-
-    size = db.llen("sensors")
-    for index in range(0, size):
-        sensor = json.loads(db.lindex("sensors", index))
-        if sensor["type"] == "zwave":
-            data = {"name": sensor["name"], "node_id": sensor["node_id"]}
-            zstick.sensor_list.append(data)
-
-    while True:
-        size = db.llen("sensor_changes")
-        if size > 0:
-            for index in range(0, size):
-                sensor = json.loads(db.lindex("sensor_changes", index))
-                for known_sensor in zstick.sensor_list:
-                    if sensor["name"] == known_sensor["name"]:
-                        db.lrem("sensor_changes", 1, db.lindex("sensor_changes", index))
-                        zstick.switch(known_sensor["node_id"], sensor["state"])
-                        db.set(sensor["name"], sensor["state"])
-                        break
-
     zstick.stop_network()
 
 if __name__ == '__main__':
