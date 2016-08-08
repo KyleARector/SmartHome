@@ -9,18 +9,15 @@ db = redis.StrictRedis(host='localhost', port=4747, db=0)
 zwave_sensors = []
 wifi_sensors = []
 
-size = db.llen("sensors")
-for index in range(0, size):
-    sensor = json.loads(db.lindex("sensors", index))
+sensors =  db.lrange("sensors", 0, -1)
+for sensor in sensors:
+    sensor = json.loads(sensor)
     if sensor["type"] == "zwave":
         data = {"name": sensor["name"], "node_id": sensor["node_id"]}
         zwave_sensors.append(data)
     elif sensor["type"] == "wifi":
         data = {"name": sensor["name"], "address": sensor["address"]}
         wifi_sensors.append(data)
-
-print zwave_sensors
-print wifi_sensors
 
 while True:
     size = db.llen("sensor_changes")
