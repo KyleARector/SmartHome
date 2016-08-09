@@ -1,37 +1,43 @@
-<head>
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>SmartPi</title>
+        <link href="/css/interface.css" rel="stylesheet" type="text/css" />
+        <link href="/css/flat-ui.css" rel="stylesheet" type="text/css" />
+        <style>
+            button {
+                width:200px;
+                height:50px;
+                padding:20px;
+            }
+        </style>
+        <script type="text/javascript" src="/js/jquery-2.0.3.min.js"></script>
+        <script type="text/javascript" src="/js/interface.js"></script>
+        <script>
+            function createButton(context, name){
+                var button = document.createElement("button");
+                button.type = "submit";
+                button.innerHTML = name;
+                button.onclick = buttonClick(button.innerHTML);
+                context.appendChild(button);
+            }
 
-<LINK href="/css/interface.css" rel="stylesheet" type="text/css" />
-<LINK href="/css/flat-ui.css" rel="stylesheet" type="text/css" />
+            function getURL(url){
+                var req = new XMLHttpRequest(); // a new request
+                req.open("GET",url,false);
+                req.send(null);
+                return req.responseText;
+            }
 
-<script type="text/javascript" src="/js/jquery-2.0.3.min.js"></script>
-<script type="text/javascript" src="/js/interface.js"></script>
-<script type="text/javascript" src="/js/arest.js"></script>
-<script>
-    function createButton(context, func, name){
-        var button = document.createElement("button");
-        button.type = "button";
-        button.value = name;
-        button.onclick = func;
-        context.appendChild(button);
-    }
+            window.onload = function(){
+                var json = JSON.parse(getURL("/sensors"));
+                for (var i = 0, len = json.length; i < len; i++) {
+                  createButton(document.body, json[i]["name"]);
+                }
+            }
+        </script>
+    </head>
+    <body>
 
-    function getURL(url){
-        alert("made it")
-        var req = new XMLHttpRequest(); // a new request
-        req.open("GET",url,false);
-        req.send(null);
-        return req.responseText;
-    }
-
-    window.onload = function(){
-        alert("hey")
-        var json = JSON.parse(getURL("http://localhost:3700/sensors"));
-        alert(json)
-    }
-</script>
-
-</head>
-
-<body>
-
-</body>
+    </body>
+</html>

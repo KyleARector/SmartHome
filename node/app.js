@@ -28,7 +28,21 @@ app.get('/key', function getKeyDetails(req, res, next) {
     });
   }
   else {
-    res.json("No key sent");
+    res.json("No Key Sent");
+  }
+});
+
+app.get('/toggleSwitch', function getKeyDetails(req, res) {
+  if(req.query.sensor && req.query.state){
+      var sensor = req.query.sensor;
+      var state = req.query.state;
+      console.log('Toggling switch ' + sensor);
+      var message = '{"name": "' + sensor + '", "state": "' + state + '"}'
+      client.rpush('sensor_changes', message);
+      res.json(message);
+  }
+  else {
+    res.json("Incorrect Parameters");
   }
 });
 

@@ -20,14 +20,8 @@ setInterval(function() {
 }, 5000);
 
 // Function to control the lamp
-function buttonClick(clicked_id){
-
-  if (clicked_id == "1"){
-    send(type, address, "/digital/8/1");  
-  } 
-
-  if (clicked_id == "2"){
-    send(type, address, "/digital/8/0");  
-  } 
-
+function buttonClick(name){
+    var req = new XMLHttpRequest();
+    req.open("GET",'/toggleSwitch?sensor=3D%20Printer&state=True',false);
+    req.send(null);
 }
