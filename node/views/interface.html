@@ -6,25 +6,32 @@
 <script type="text/javascript" src="/js/jquery-2.0.3.min.js"></script>
 <script type="text/javascript" src="/js/interface.js"></script>
 <script type="text/javascript" src="/js/arest.js"></script>
+<script>
+    function createButton(context, func, name){
+        var button = document.createElement("button");
+        button.type = "button";
+        button.value = name;
+        button.onclick = func;
+        context.appendChild(button);
+    }
 
+    function getURL(url){
+        alert("made it")
+        var req = new XMLHttpRequest(); // a new request
+        req.open("GET",url,false);
+        req.send(null);
+        return req.responseText;
+    }
 
+    window.onload = function(){
+        alert("hey")
+        var json = JSON.parse(getURL("http://localhost:3700/sensors"));
+        alert(json)
+    }
 </script>
 
 </head>
 
 <body>
 
-<div class="mainContainer">
-
-<div class="title">WiFi Power Switch</div>
-
-<div class="buttonBlock"><span class="buttonTitle">Switch Control</span>
-
-        <button class="btn btn-block btn-lg btn-primary" type="button" id="1" onClick="buttonClick(this.id)">On</button>
-        <button class="btn btn-block btn-lg btn-danger" type="button" id="2" onClick="buttonClick(this.id)">Off</button>
-        <div class="status" id="status">Offline</div>
-
-</div>
-
-</div>
 </body>

@@ -7,6 +7,7 @@ var redis = require('redis');
 var app = express();
 var port = 3700;
 var client = redis.createClient(4747, '127.0.0.1');
+var sensorList = []
 
 // Set views
 app.use(express.static(path.join(__dirname, 'public')));
@@ -31,10 +32,14 @@ app.get('/key', function getKeyDetails(req, res, next) {
   }
 });
 
-app.get('/test', function testGetting(req, res) {
-  var testList = []
-  client.lrange('test_sensors', 0, -1, testList);
-  console.log(testList);
+app.get('/sensors', function testGetting(req, res) {
+    client.lrange('sensors', 0, -1, function (error, items) {
+        sensorList = [];
+        items.forEach(function (item) {
+            sensorList.push(JSON.parse(item));
+        });
+    });
+    res.json(sensorList);
 });
 
 // Start server
