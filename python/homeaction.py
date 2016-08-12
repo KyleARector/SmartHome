@@ -13,10 +13,10 @@ sensors =  db.lrange("sensors", 0, -1)
 for sensor in sensors:
     sensor = json.loads(sensor)
     if sensor["type"] == "zwave":
-        data = {"name": sensor["name"], "node_id": sensor["node_id"]}
+        data = {"name": sensor["name"], "node_id": sensor["node_id"], "function": sensor["function"]}
         zwave_sensors.append(data)
     elif sensor["type"] == "wifi":
-        data = {"name": sensor["name"], "address": sensor["address"]}
+        data = {"name": sensor["name"], "address": sensor["address"], "function": sensor["function"]}
         wifi_sensors.append(data)
 
 while True:
@@ -28,7 +28,7 @@ while True:
             for known_sensor in zwave_sensors:
                 if sensor["name"] == known_sensor["name"]:
                     db.lrem("sensor_changes", 1, db.lindex("sensor_changes", index))
-                    zstick.switch(known_sensor["node_id"], sensor["state"])
+                    zstick.switch(known_sensor["node_id"], sensor["state"], known_sensor["function"])
                     db.set(sensor["name"], sensor["state"])
                     break
             for known_sensor in wifi_sensors:

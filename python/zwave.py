@@ -42,14 +42,21 @@ class ZStickInterface(object):
         except:
             print("Invalid node id")
 
-    def switch(self, node_id, state):
+    def switch(self, node_id, state, function):
         try:
             in_work_node = self.network.nodes[node_id]
-            switch_val = in_work_node.get_switches().keys()[0]
-            if state == "False":
-                in_work_node.set_switch(switch_val, False)
-            else:
-                in_work_node.set_switch(switch_val, True)
+            if function == "dimmer":
+                switch_val = in_work_node.get_dimmers().keys()[0]
+                if state == "False":
+                    in_work_node.set_dimmer(switch_val, 0)
+                else:
+                    in_work_node.set_dimmer(switch_val, 99)
+            elif function == "switch":
+                switch_val = in_work_node.get_switches().keys()[0]
+                if state == "False":
+                    in_work_node.set_switch(switch_val, False)
+                else:
+                    in_work_node.set_switch(switch_val, True)
         except:
             print("Invalid node id")
 
