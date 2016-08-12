@@ -49,8 +49,10 @@ class ZStickInterface(object):
                 switch_val = in_work_node.get_dimmers().keys()[0]
                 if state == "False":
                     in_work_node.set_dimmer(switch_val, 0)
-                else:
+                elif state == "True":
                     in_work_node.set_dimmer(switch_val, 99)
+                else:
+                    in_work_node.set_dimmer(switch_val, int(state))
             elif function == "switch":
                 switch_val = in_work_node.get_switches().keys()[0]
                 if state == "False":
