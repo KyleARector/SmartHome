@@ -1,18 +1,39 @@
 <!doctype html>
 <html lang="en">
     <head>
+        <meta charset="utf-8">
         <title>SmartPi</title>
-        <link href="/css/interface.css" rel="stylesheet" type="text/css" />
-        <link href="/css/flat-ui.css" rel="stylesheet" type="text/css" />
+        <meta name="description" content="Web Interface">
+        <meta name="author" content="KyleARector">
         <style>
-            button {
-                width:200px;
-                height:50px;
-                padding:20px;
+            .button {
+                background-color: #106caf;
+                color: white;
+                padding: 15px 32px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+                margin: 4px 2px;
+                cursor: pointer;
+                border-radius: 15px 50px;
+            }
+
+            @media (max-width:1090px) {
+                .wrapper {
+                    width: 80%;
+                    margin: auto;
+                }
+
+                .button {
+                    width: 100%;
+                    font-size: 75px;
+                    padding: 30px 32px;
+                    margin: 20px 10px;
+                }
             }
         </style>
         <script type="text/javascript" src="/js/jquery-2.0.3.min.js"></script>
-        <script type="text/javascript" src="/js/interface.js"></script>
         <script>
             function buttonClick(name){
                 var req = new XMLHttpRequest();
@@ -23,13 +44,14 @@
             function createButton(context, name){
                 var button = document.createElement("button");
                 button.type = "submit";
+                button.className = "button";
                 button.innerHTML = name;
                 button.onclick = function(){buttonClick(button.innerHTML);};
                 context.appendChild(button);
             }
 
             function getURL(url){
-                var req = new XMLHttpRequest(); // a new request
+                var req = new XMLHttpRequest();
                 req.open("GET",url,false);
                 req.send(null);
                 return req.responseText;
@@ -38,12 +60,14 @@
             window.onload = function(){
                 var json = JSON.parse(getURL("/sensors"));
                 for (var i = 0, len = json.length; i < len; i++) {
-                  createButton(document.body, json[i]["name"]);
+                  createButton(document.getElementById("wrapper"), json[i]["name"]);
                 }
             }
         </script>
     </head>
     <body>
+        <div id="wrapper" class="wrapper">
 
+        </div>
     </body>
 </html>

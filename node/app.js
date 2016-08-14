@@ -19,7 +19,7 @@ app.get('/', function(req, res){
 });
 
 // API access
-app.get('/key', function getKeyDetails(req, res, next) {
+app.get('/sensorState', function getState(req, res, next) {
   if(req.query.key){
     var key = req.query.key;
     console.log('getting value of key ' + key);
@@ -32,7 +32,7 @@ app.get('/key', function getKeyDetails(req, res, next) {
   }
 });
 
-app.get('/toggleSwitch', function getKeyDetails(req, res) {
+app.get('/toggleSwitch', function toggleSwitch(req, res) {
   if(req.query.sensor && req.query.state){
       var sensor = req.query.sensor;
       var state = req.query.state;
@@ -46,7 +46,7 @@ app.get('/toggleSwitch', function getKeyDetails(req, res) {
   }
 });
 
-app.get('/sensors', function testGetting(req, res) {
+app.get('/sensors', function getSensors(req, res) {
     client.lrange('sensors', 0, -1, function (error, items) {
         sensorList = [];
         items.forEach(function (item) {
@@ -54,6 +54,17 @@ app.get('/sensors', function testGetting(req, res) {
         });
     });
     res.json(sensorList);
+});
+
+app.get('/thermostat', function thermoReport(req, res) {
+    var tempSet = client.get('tempSet');
+    console.log(tempSet);
+    var tempChange = client.get('tempChange');
+    console.log(tempChange);
+    var tempDelta = tempChange - tempSet;
+    client.set('tempSet', tempChange)
+    output = '{"tempDelta": ' + tempDelta + '}'
+    res.json(output);
 });
 
 // Start server
