@@ -14,11 +14,17 @@
         <script type="text/javascript" src="/js/jquery-2.0.3.min.js"></script>
         <script type="text/javascript" src="/js/interface.js"></script>
         <script>
+            function buttonClick(name){
+                var req = new XMLHttpRequest();
+                req.open("GET",'/toggleSwitch?sensor=' + name + '&state=False',false);
+                req.send(null);
+            }
+
             function createButton(context, name){
                 var button = document.createElement("button");
                 button.type = "submit";
                 button.innerHTML = name;
-                button.onclick = buttonClick(button.innerHTML);
+                button.onclick = function(){buttonClick(button.innerHTML);};
                 context.appendChild(button);
             }
 
