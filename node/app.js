@@ -20,15 +20,15 @@ app.get('/', function(req, res){
 
 // API access
 app.get('/sensorState', function getState(req, res, next) {
-  if(req.query.key){
-    var key = req.query.key;
-    console.log('getting value of key ' + key);
-    client.get(key, function(err, value) {
+  if(req.query.sensor){
+    var sensor = req.query.sensor;
+    console.log('getting value of sensor ' + sensor);
+    client.get(sensor, function(err, value) {
       res.json(value);
     });
   }
   else {
-    res.json("No Key Sent");
+    res.json("No Sensor Sent");
   }
 });
 

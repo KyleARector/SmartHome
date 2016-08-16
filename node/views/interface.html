@@ -6,8 +6,7 @@
         <meta name="description" content="Web Interface">
         <meta name="author" content="KyleARector">
         <style>
-            .button {
-                background-color: #106caf;
+            button {
                 color: white;
                 padding: 15px 32px;
                 text-align: center;
@@ -19,13 +18,21 @@
                 border-radius: 15px 50px;
             }
 
+            .True {
+                background-color: #106caf;
+            }
+
+            .False {
+                background-color: #7d8079;
+            }
+
             @media (max-width:1090px) {
                 .wrapper {
                     width: 80%;
                     margin: auto;
                 }
 
-                .button {
+                button {
                     width: 100%;
                     font-size: 75px;
                     padding: 30px 32px;
@@ -35,18 +42,25 @@
         </style>
         <script type="text/javascript" src="/js/jquery-2.0.3.min.js"></script>
         <script>
-            function buttonClick(name){
+            function buttonClick(button){
                 var req = new XMLHttpRequest();
-                req.open("GET",'/toggleSwitch?sensor=' + name + '&state=False',false);
+                if(button.className == "True") {
+                    button.className = "False";
+                }
+                else {
+                    button.className = "True";
+                }
+                req.open("GET",'/toggleSwitch?sensor=' + button.innerHTML + '&state=' + button.className,false);
                 req.send(null);
             }
 
             function createButton(context, name){
+                var state = JSON.parse(getURL("/sensorState?sensor=" + name));
                 var button = document.createElement("button");
                 button.type = "submit";
-                button.className = "button";
+                button.className = state;
                 button.innerHTML = name;
-                button.onclick = function(){buttonClick(button.innerHTML);};
+                button.onclick = function(){buttonClick(button);};
                 context.appendChild(button);
             }
 
