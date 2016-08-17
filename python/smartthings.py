@@ -18,7 +18,6 @@ class SmartThingsInterface(object):
             command = "off"
         else:
             command = "on"
-        device = device.replace(" ", "%20")
         headers = {'Authorization': "Bearer " + self.config["access_token"]}
         payload = {"device": device, "command": command}
         req = requests.post(self.config["url"] + endpt, headers=headers, json=payload)
