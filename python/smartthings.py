@@ -12,10 +12,13 @@ class SmartThingsInterface(object):
         data = req.json()
         return data
 
-    def post(self, device, command):
-        endpt = "/sensors"
+    def post(self, endpt, device, state):
+        endpt = "/" + endpt
+        if state == "False":
+            command = "off"
+        else:
+            command = "on"
+        device = device.replace(" ", "%20")
         headers = {'Authorization': "Bearer " + self.config["access_token"]}
         payload = {"device": device, "command": command}
         req = requests.post(self.config["url"] + endpt, headers=headers, json=payload)
-        data = req.json()
-        return data
