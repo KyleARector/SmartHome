@@ -55,11 +55,13 @@ if slack.rtm_connect():
                     slack.rtm_send_message(item["channel"], message)
                 elif "plex" in item["text"].lower() or "computer" in item["text"].lower():
                     if "on" in item["text"].lower():
-                        command = "on"
+                        command = "True"
+                        verb = "on"
                     else:
-                        command = "off"
-                    slack.rtm_send_message(item["channel"], "The computer is turning " + command)
-                    r = requests.get(compAddr + "/relay")
+                        command = "False"
+                        verb = "off"
+                    db.lpush("sensor_changes", "{\"name\": \"Computer\", \"state\": \"" + command + "\"}")
+                    slack.rtm_send_message(item["channel"], "The computer is turning " + verb)
                 elif "sphere" in item["text"].lower():
                     r = {}
                     if "red" in item["text"].lower():
@@ -94,7 +96,7 @@ if slack.rtm_connect():
                         tempString = tempString[-2:]
                         if tempString.isdigit():
                             tempChange = int(tempString)
-		            db.set("tempChange", tempChange)
+                            db.set("tempChange", tempChange)
                             message = "Setting the thermostat to " + tempString + " degrees"
                             slack.rtm_send_message(item["channel"], message) 
                 elif "to do" in item["text"].lower() or "todo" in item["text"].lower():
@@ -106,7 +108,7 @@ if slack.rtm_connect():
                         if task_count > 1:
                             task_qty_word += "s"
                         message = "You have " + str(task_count) + " " + task_qty_word + \
-                                  " reamining on your to do list today:\n"
+                                  " remaining on your to do list today:\n"
                         for task in task_list:
                             message += " - " + task + "\n"
                     slack.rtm_send_message(item["channel"], message)
