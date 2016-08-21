@@ -7,7 +7,9 @@ var redis = require('redis');
 var app = express();
 var port = 80;
 var client = redis.createClient(4747, '127.0.0.1');
-var sensorList = []
+var sensorList = [];
+var tempChange = 0;
+var tempSet = 0;
 
 // Set views
 app.use(express.static(path.join(__dirname, 'public')));
@@ -57,14 +59,16 @@ app.get('/sensors', function getSensors(req, res) {
 });
 
 app.get('/thermostat', function thermoReport(req, res) {
-    var tempSet = client.get('tempSet');
-    console.log(tempSet);
-    var tempChange = client.get('tempChange');
-    console.log(tempChange);
-    var tempDelta = tempChange - tempSet;
-    client.set('tempSet', tempChange);
-    output = {"tempDelta":  + tempDelta};
-    res.json(output);
+    client.get('tempSet', function(err, reply){
+        tempSet = parseInt(reply);
+        client.get('tempChange', function (err, reply) {
+            tempChange = parseInt(reply);
+            var tempDelta = tempChange - tempSet;
+            client.set('tempSet', tempChange);
+            var output = {"tempDelta":  + " " + tempDelta};
+            res.json(output);
+        });
+    });
 });
 
 // Start server
