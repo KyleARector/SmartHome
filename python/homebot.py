@@ -89,7 +89,7 @@ if slack.rtm_connect():
                         slack.rtm_send_message(item["channel"], message)
                     elif "thermostat" in item["text"].lower():
                         if "what" in item["text"].lower():
-                            setTemp = db.get("tempSet")
+                            setTemp = db.get("Thermostat")
                             message = "The thermostat is set to " + setTemp + " degrees"
                             slack.rtm_send_message(item["channel"], message)
                         else:

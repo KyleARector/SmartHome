@@ -59,16 +59,24 @@ app.get('/sensors', function getSensors(req, res) {
 });
 
 app.get('/thermostat', function thermoReport(req, res) {
-    client.get('tempSet', function(err, reply){
-        tempSet = parseInt(reply);
-        client.get('tempChange', function (err, reply) {
-            tempChange = parseInt(reply);
-            var tempDelta = tempChange - tempSet;
-            client.set('tempSet', tempChange);
-            var output = {"tempDelta":  + " " + tempDelta};
-            res.json(output);
+    if(req.query.setTemp) {
+        // Need to verify valid temp
+        client.set('tempChange', req.query.setTemp);
+        var output = {"tempSet": +" " + req.query.setTemp};
+        res.json(output);
+    }
+    else {
+        client.get('Thermostat', function (err, reply) {
+            tempSet = parseInt(reply);
+            client.get('tempChange', function (err, reply) {
+                tempChange = parseInt(reply);
+                var tempDelta = tempChange - tempSet;
+                client.set('Thermostat', tempChange);
+                var output = {"tempDelta": +" " + tempDelta};
+                res.json(output);
+            });
         });
-    });
+    }
 });
 
 // Start server

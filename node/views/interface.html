@@ -20,7 +20,12 @@
                 font-size: 16px;
                 margin: 4px 2px;
                 cursor: pointer;
-                border-radius: 15px 50px;
+                border-radius: 15px;
+            }
+
+            h1 {
+                text-decoration: none;
+                font-family: Arial;
             }
 
             .True {
@@ -35,6 +40,30 @@
                 .wrapper {
                     width: 80%;
                     margin: auto;
+                }
+
+                .thermostat {
+                    width:80%;
+                    height: 300px;
+                }
+
+                .thermo_buttons {
+                    width: 40%;
+                    float: right;
+                }
+
+                .thermo_readout {
+                    width: 60%;
+                    float: left;
+                    font-family: Arial;
+                    font-size: 250px;
+                    text-align: left;
+                }
+
+                h1 {
+                    font-size: 75px;
+                    margin:auto;
+                    text-align: center;
                 }
 
                 button {
@@ -76,17 +105,49 @@
                 return req.responseText;
             }
 
+            function thermoButton(action) {
+                var startVal = parseInt(document.getElementById("thermo_data").innerHTML);
+                if(action == "up") {
+                    startVal++;
+                }
+                else {
+                    startVal--;
+                }
+                document.getElementById("thermo_data").innerHTML = String(startVal);
+            }
+
+            function thermoSubmit() {
+                var temp = document.getElementById("thermo_data").innerHTML;
+                getURL("/thermostat?setTemp=" + temp)
+            }
+
             window.onload = function(){
                 var json = JSON.parse(getURL("/sensors"));
                 for (var i = 0, len = json.length; i < len; i++) {
-                  createButton(document.getElementById("wrapper"), json[i]["name"]);
+                    if (json[i]["function"] == "switch" || json[i]["function"] == "dimmer") {
+                        createButton(document.getElementById("switches"), json[i]["name"]);
+                    }
                 }
+                document.getElementById("thermo_data").innerHTML = JSON.parse(getURL("/sensorState?sensor=Thermostat"));
             }
         </script>
     </head>
     <body>
         <div id="wrapper" class="wrapper">
+            <h1>Thermostat</h1>
+            <div id="thermostat" class="thermostat">
+                <div class="thermo_readout">
+                    <p id="thermo_data">70</p>
+                </div>
+                <div class="thermo_buttons">
+                    <button type="submit" onclick="thermoButton('up')">&#9650;</button>
+                    <button type="submit" onclick="thermoButton('down')">&#9660;</button>
+                    <button type="submit" onclick="thermoSubmit()">Send</button>
+                </div>
+            </div>
+            <div id="switches">
 
+            </div>
         </div>
     </body>
 </html>
