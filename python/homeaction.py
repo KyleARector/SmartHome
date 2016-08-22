@@ -17,7 +17,7 @@ zwave_sensors = []
 wifi_sensors = []
 st_sensors = []
 
-sensors =  db.lrange("sensors", 0, -1)
+sensors = db.lrange("sensors", 0, -1)
 for sensor in sensors:
     sensor = json.loads(sensor)
     if sensor["type"] == "zwave":
@@ -45,8 +45,9 @@ while True:
             for known_sensor in wifi_sensors:
                 if sensor["name"] == known_sensor["name"]:
                     db.lrem("sensor_changes", 1, db.lindex("sensor_changes", index))
-                    r = requests.get(known_sensor["address"] + "/relay")
-                    db.set(sensor["name"], sensor["state"])
+                    if sensor["state"] != db.get(sensor["name"]):
+                        r = requests.get(known_sensor["address"] + "/relay")
+                        db.set(sensor["name"], sensor["state"])
                     break
             for known_sensor in st_sensors:
                 if sensor["name"] == known_sensor["name"]:
