@@ -13,7 +13,11 @@ infile.close()
 smartthing = SmartThingsInterface(config["smartthings"])
 
 while True:
-    sensor_data = smartthing.get()
+    try:
+        sensor_data = smartthing.get()
+    except:
+        print "Error getting data"
+        sensor_data = []
     for sensor in sensor_data:
         if sensor["value"] == "on" or sensor["value"] == "active" or sensor["value"] == "open":
             state = "True"
