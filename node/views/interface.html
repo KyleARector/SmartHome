@@ -28,7 +28,7 @@
                 font-family: Arial;
             }
 
-            .True {
+            .True, .thermo_button {
                 background-color: #106caf;
             }
 
@@ -43,12 +43,12 @@
                 }
 
                 .thermostat {
-                    width:80%;
+                    width:70%;
                     height: 300px;
                 }
 
                 .thermo_buttons {
-                    width: 40%;
+                    width: 30%;
                     float: right;
                 }
 
@@ -94,6 +94,7 @@
                 button.type = "submit";
                 button.className = state;
                 button.innerHTML = name;
+                button.id = name;
                 button.onclick = function(){buttonClick(button);};
                 context.appendChild(button);
             }
@@ -121,6 +122,18 @@
                 getURL("/thermostat?setTemp=" + temp)
             }
 
+            // Update sensors every few seconds
+            // Pub/Sub to save memory?
+            setInterval(function() {
+                var json = JSON.parse(getURL("/sensors"));
+                for (var i = 0, len = json.length; i < len; i++) {
+                    if (json[i]["function"] == "switch" || json[i]["function"] == "dimmer") {
+                        var state = JSON.parse(getURL("/sensorState?sensor=" + json[i]["name"]));
+                        document.getElementById(json[i]["name"]).className = state;
+                    }
+                }
+            }, 1)
+
             window.onload = function(){
                 var json = JSON.parse(getURL("/sensors"));
                 for (var i = 0, len = json.length; i < len; i++) {
@@ -140,9 +153,9 @@
                     <p id="thermo_data">70</p>
                 </div>
                 <div class="thermo_buttons">
-                    <button type="submit" onclick="thermoButton('up')">&#9650;</button>
-                    <button type="submit" onclick="thermoButton('down')">&#9660;</button>
-                    <button type="submit" onclick="thermoSubmit()">Send</button>
+                    <button type="submit" class="thermo_button" onclick="thermoButton('up')">&#9650;</button>
+                    <button type="submit" class="thermo_button" onclick="thermoButton('down')">&#9660;</button>
+                    <button type="submit" class="thermo_button" onclick="thermoSubmit()">Set</button>
                 </div>
             </div>
             <div id="switches">
