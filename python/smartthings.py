@@ -5,8 +5,8 @@ class SmartThingsInterface(object):
     def __init__(self, config):
         self.config = config
 
-    def get(self):
-        endpt = "/sensors"
+    def get(self, endpt):
+        endpt = "/" + endpt
         headers = {'Authorization': "Bearer " + self.config["access_token"]}
         req = requests.get(self.config["url"] + endpt, headers=headers)
         data = req.json()

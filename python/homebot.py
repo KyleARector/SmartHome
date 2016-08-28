@@ -48,7 +48,7 @@ if slack.rtm_connect():
                 elif "hey" in item["text"].lower() or "hello" in item["text"].lower():
                     slack.rtm_send_message(item["channel"], "Hello! How are you?")
                 elif "home" in item["text"].lower() and "status" in item["text"].lower():
-                    sensor_data = smartthing.get()
+                    sensor_data = smartthing.get("sensors")
                     message = "Here's your home status:\n"
                     for sensor in sensor_data:
                         message += " - " + sensor["name"] + " is " + sensor["value"] + "\n"
