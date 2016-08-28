@@ -19,8 +19,7 @@ while True:
         print "Error getting data"
         sensor_data = []
     for sensor in sensor_data:
-        if sensor["value"] == "on" or sensor["value"] == "active" or sensor["value"] == "open" \
-                or sensor["value"] == "present":
+        if sensor["value"] == "on" or sensor["value"] == "active" or sensor["value"] == "open" or sensor["value"] == "present":
             state = "True"
         else:
             state = "False"
