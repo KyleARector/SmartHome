@@ -5,8 +5,8 @@ from openzwave.scene import ZWaveScene
 from openzwave.controller import ZWaveController
 from openzwave.network import ZWaveNetwork
 from openzwave.option import ZWaveOption
+import libopenzwave
 import time
-import redis
 import json
 
 
@@ -23,6 +23,11 @@ class ZStickInterface(object):
         self.options.set_save_log_level("Info")
         self.options.set_logging(False)
         self.options.lock()
+
+        self.manager = libopenzwave.PyManager()
+        self.manager.create()
+        self.manager.addWatcher(self.event_callback)
+        self.manager.addDriver(self.device)
 
         print("Starting Network...")
         self.network = ZWaveNetwork(self.options, log=None)
@@ -61,6 +66,9 @@ class ZStickInterface(object):
                     in_work_node.set_switch(switch_val, True)
         except:
             print("Invalid node id")
+
+    def event_callback(self, args):
+        print args
 
     def stop_network(self):
         self.network.stop()
