@@ -12,6 +12,7 @@ import json
 
 class ZStickInterface(object):
     def __init__(self):
+        self.sensor_events = []
         self.device = "/dev/ttyACM0"
         # If using older Z-sticks, use the below device:
         # self.device = "/dev/ttyUSB0"
@@ -68,7 +69,18 @@ class ZStickInterface(object):
             print("Invalid node id")
 
     def event_callback(self, args):
-        print args
+        if args["notificationType"] in ("ValueAdded", "ValueChanged"):
+            cmd_class = args["valueId"]["commandClass"]
+            if cmd_class == "COMMAND_CLASS_SENSOR_BINARY":
+                node_id = args["valueId"]["nodeId"]
+                state = args["valueId"]["value"]
+                data = {"node_id": node_id, "state": state}
+                self.sensor_events.append(data)
+
+    def get_sensor_events(self):
+        last_events = self.sensor_events
+        self.sensor_events = []
+        return last_events
 
     def stop_network(self):
         self.network.stop()

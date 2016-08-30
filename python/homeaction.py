@@ -55,5 +55,11 @@ while True:
                     smartthing.post("switches", sensor["name"], sensor["state"])
                     db.set(sensor["name"], sensor["state"])
                     break
+    for item in zstick.get_sensor_events():
+        for known_sensor in zwave_sensors:
+            if item["node_id"] == known_sensor["node_id"]:
+                db.set(known_sensor["name"], item["state"])
+                break
+
 
 zstick.stop_network()
