@@ -106,7 +106,7 @@
                 return req.responseText;
             }
 
-            function thermoButton(action) {
+            /*function thermoButton(action) {
                 var startVal = parseInt(document.getElementById("thermo_data").innerHTML);
                 if(action == "up") {
                     startVal++;
@@ -120,14 +120,14 @@
             function thermoSubmit() {
                 var temp = document.getElementById("thermo_data").innerHTML;
                 getURL("/thermostat?setTemp=" + temp)
-            }
+            }*/
 
             // Update sensors every few seconds
             // Pub/Sub to save memory?
             setInterval(function() {
                 var json = JSON.parse(getURL("/sensors"));
                 for (var i = 0, len = json.length; i < len; i++) {
-                    if (json[i]["function"] == "switch" || json[i]["function"] == "dimmer") {
+                    if (json[i]["function"] == "switch" || json[i]["function"] == "dimmer" || json[i]["function"] == "motion") {
                         var state = JSON.parse(getURL("/sensorState?sensor=" + json[i]["name"]));
                         document.getElementById(json[i]["name"]).className = state;
                     }
@@ -137,17 +137,17 @@
             window.onload = function(){
                 var json = JSON.parse(getURL("/sensors"));
                 for (var i = 0, len = json.length; i < len; i++) {
-                    if (json[i]["function"] == "switch" || json[i]["function"] == "dimmer") {
+                    if (json[i]["function"] == "switch" ||  json[i]["function"] == "dimmer" || json[i]["function"] == "motion") {
                         createButton(document.getElementById("switches"), json[i]["name"]);
                     }
                 }
-                document.getElementById("thermo_data").innerHTML = JSON.parse(getURL("/sensorState?sensor=Thermostat"));
+                //document.getElementById("thermo_data").innerHTML = JSON.parse(getURL("/sensorState?sensor=Thermostat"));
             }
         </script>
     </head>
     <body>
         <div id="wrapper" class="wrapper">
-            <h1>Thermostat</h1>
+            <!--<h1>Thermostat</h1>
             <div id="thermostat" class="thermostat">
                 <div class="thermo_readout">
                     <p id="thermo_data">70</p>
@@ -157,7 +157,7 @@
                     <button type="submit" class="thermo_button" onclick="thermoButton('down')">&#9660;</button>
                     <button type="submit" class="thermo_button" onclick="thermoSubmit()">Set</button>
                 </div>
-            </div>
+            </div>-->
             <div id="switches">
 
             </div>
