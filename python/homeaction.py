@@ -35,23 +35,25 @@ while True:
     if size > 0:
         for index in range(0, size):
             # Currently only addresses "switch" and "dimmer" function sensors
-            sensor = json.loads(db.lindex("sensor_changes", index))
+            try:
+                sensor = json.loads(db.lindex("sensor_changes", index))
+                db.lrem("sensor_changes", 1, db.lindex("sensor_changes", index))
+            except:
+                db.lrem("sensor_changes", 1, db.lindex("sensor_changes", index))
+                break
             for known_sensor in zwave_sensors:
                 if sensor["name"] == known_sensor["name"]:
-                    db.lrem("sensor_changes", 1, db.lindex("sensor_changes", index))
                     zstick.switch(known_sensor["node_id"], sensor["state"], known_sensor["function"])
                     db.set(sensor["name"], sensor["state"])
                     break
             for known_sensor in wifi_sensors:
                 if sensor["name"] == known_sensor["name"]:
-                    db.lrem("sensor_changes", 1, db.lindex("sensor_changes", index))
                     if sensor["state"] != db.get(sensor["name"]):
                         r = requests.get(known_sensor["address"] + "/relay")
                         db.set(sensor["name"], sensor["state"])
                     break
             for known_sensor in st_sensors:
                 if sensor["name"] == known_sensor["name"]:
-                    db.lrem("sensor_changes", 1, db.lindex("sensor_changes", index))
                     smartthing.post("switches", sensor["name"], sensor["state"])
                     db.set(sensor["name"], sensor["state"])
                     break
