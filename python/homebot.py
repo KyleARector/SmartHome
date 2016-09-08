@@ -33,7 +33,7 @@ if slack.rtm_connect():
     while True:
         chat = slack.rtm_read()
         for item in chat:
-            if "type" in item and item["type"] == "message":
+            if "type" in item and item["type"] == "message" and item["user"] != config["slack"]["bot_user"]:
                 if "gas" in item["text"].lower() or "fuel" in item["text"].lower():
                     if "ford" in item["text"].lower():
                         auto_data = auto.get_fuel_cost("Ford")
