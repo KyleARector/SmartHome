@@ -1,6 +1,5 @@
 import time
 import json
-import requests
 import redis
 from smartthings import SmartThingsInterface
 
