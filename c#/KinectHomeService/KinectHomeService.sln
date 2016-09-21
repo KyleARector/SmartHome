@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KinectService", "KinectService.csproj", "{6DBA8BEC-10FF-4CF7-B4E2-66F41370BF97}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KinectHomeService", "KinectHomeService.csproj", "{BD38BC00-98C4-4A72-8731-14015E9A3FB0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{6DBA8BEC-10FF-4CF7-B4E2-66F41370BF97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6DBA8BEC-10FF-4CF7-B4E2-66F41370BF97}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6DBA8BEC-10FF-4CF7-B4E2-66F41370BF97}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6DBA8BEC-10FF-4CF7-B4E2-66F41370BF97}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD38BC00-98C4-4A72-8731-14015E9A3FB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD38BC00-98C4-4A72-8731-14015E9A3FB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD38BC00-98C4-4A72-8731-14015E9A3FB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD38BC00-98C4-4A72-8731-14015E9A3FB0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

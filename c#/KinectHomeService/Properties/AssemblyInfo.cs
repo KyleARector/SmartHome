@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("KinectService")]
+[assembly: AssemblyTitle("KinectHomeService")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("KinectService")]
+[assembly: AssemblyProduct("KinectHomeService")]
 [assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("6dba8bec-10ff-4cf7-b4e2-66f41370bf97")]
+[assembly: Guid("bd38bc00-98c4-4a72-8731-14015e9a3fb0")]
 
 // Version information for an assembly consists of the following four values:
 //
