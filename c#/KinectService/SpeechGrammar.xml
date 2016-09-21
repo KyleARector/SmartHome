@@ -1,0 +1,53 @@
+﻿<grammar version="1.0" xml:lang="en-US" root="rootRule" tag-format="semantics/1.0-literals" xmlns="http://www.w3.org/2001/06/grammar">
+  <rule id="rootRule">
+    <one-of>
+      <item>
+        <tag>LAMP ON</tag>
+        <one-of>
+          <item> turn lamp on </item>
+          <item> turn the lamp on </item>
+          <item> turn light on </item>
+          <item> turn the light on </item>
+          <item> turn the Table Lamp on </item>
+          <item> turn Table Lamp on </item>
+        </one-of>
+      </item>
+      <item>
+        <tag>LAMP OFF</tag>
+        <one-of>
+          <item> turn lamp off </item>
+          <item> turn the lamp off </item>
+          <item> turn light off </item>
+          <item> turn the light off </item>
+          <item> turn the Table Lamp off </item>
+          <item> turn Table Lamp off </item>
+        </one-of>
+      </item>
+      <item>
+        <tag>PRINTER ON</tag>
+        <one-of>
+          <item> turn printer on </item>
+          <item> turn the printer on </item>
+          <item> turn 3D printer on </item>
+          <item> turn the 3D printer on </item>
+        </one-of>
+      </item>
+      <item>
+        <tag>PRINTER OFF</tag>
+        <one-of>
+          <item> turn printer off </item>
+          <item> turn the printer off </item>
+          <item> turn 3D printer off </item>
+          <item> turn the 3D printer off </item>
+        </one-of>
+      </item>
+      <item>
+        <tag>COMPUTER</tag>
+        <one-of>
+          <item> computer </item>
+          <item> home </item>
+        </one-of>
+      </item>
+    </one-of>
+  </rule>
+</grammar>
