@@ -12,6 +12,7 @@ using Microsoft.Speech.AudioFormat;
 using Microsoft.Speech.Recognition;
 using System.IO;
 using System.Net;
+using System.Threading;
 
 namespace KinectService
 {
@@ -24,15 +25,17 @@ namespace KinectService
 
         protected override void OnStart(string[] args)
         {
-            kinect.KinectStart();
+            _thread = new Thread(_kinect.KinectStart);
+            _thread.Start();
         }
 
         protected override void OnStop()
         {
-            kinect.KinectStop();
+            _kinect.KinectStop();
         }
 
-        private KinectInterface kinect = new KinectInterface();
+        private KinectInterface _kinect = new KinectInterface();
+        private Thread _thread;
     }
 
     class KinectInterface
@@ -156,13 +159,43 @@ namespace KinectService
             if (null != ri)
             {
                 this.speechEngine = new SpeechRecognitionEngine(ri.Id);
+               
+                var choices = new Choices();
+                choices.Add(new SemanticResultValue("turn lamp on", "LAMP ON"));
+                choices.Add(new SemanticResultValue("turn the lamp on", "LAMP ON"));
+                choices.Add(new SemanticResultValue("turn light on", "LAMP ON"));
+                choices.Add(new SemanticResultValue("turn the light on", "LAMP ON"));
+                choices.Add(new SemanticResultValue("turn the Table Lamp on", "LAMP ON"));
+                choices.Add(new SemanticResultValue("turn Table Lamp on", "LAMP ON"));
+                choices.Add(new SemanticResultValue("turn lamp off", "LAMP OFF"));
+                choices.Add(new SemanticResultValue("turn the lamp of", "LAMP OFF"));
+                choices.Add(new SemanticResultValue("turn light off", "LAMP OFF"));
+                choices.Add(new SemanticResultValue("turn the light off", "LAMP OFF"));
+                choices.Add(new SemanticResultValue("turn the Table Lamp off", "LAMP OFF"));
+                choices.Add(new SemanticResultValue("turn Table Lamp off", "LAMP OFF"));
+                choices.Add(new SemanticResultValue("turn printer on", "PRINTER ON"));
+                choices.Add(new SemanticResultValue("turn the printer on", "PRINTER ON"));
+                choices.Add(new SemanticResultValue("turn 3D printer on", "PRINTER ON"));
+                choices.Add(new SemanticResultValue("turn the 3D printer on", "PRINTER ON"));
+                choices.Add(new SemanticResultValue("turn printer off", "PRINTER OFF"));
+                choices.Add(new SemanticResultValue("turn the printer off", "PRINTER OFF"));
+                choices.Add(new SemanticResultValue("turn 3D printer off", "PRINTER OFF"));
+                choices.Add(new SemanticResultValue("turn the 3D printer off", "PRINTER OFF"));
+                choices.Add(new SemanticResultValue("computer", "COMPUTER"));
+                choices.Add(new SemanticResultValue("house", "COMPUTER"));
+                choices.Add(new SemanticResultValue("home", "COMPUTER"));
 
-                // Load grammar from XML file
+                var gb = new GrammarBuilder { Culture = ri.Culture };
+                gb.Append(choices);
+                
+                var g = new Grammar(gb);
+
+                /*// Load grammar from XML file
                 using (var memoryStream = new MemoryStream(Encoding.ASCII.GetBytes(Properties.Resources.SpeechGrammar)))
                 {
                     var g = new Grammar(memoryStream);
                     speechEngine.LoadGrammar(g);
-                }
+                }*/
 
                 speechEngine.SpeechRecognized += SpeechRecognized;
 
