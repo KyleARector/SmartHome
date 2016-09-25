@@ -18,7 +18,7 @@ namespace KinectHomeService
 
         public void Display()
         {
-            //notiIcon.Icon = new System.Drawing.Icon("kinect.ico");
+            //notiIcon.Icon = Properties.Resources;
             notiIcon.Text = "Kinect Pseudo Service";
             notiIcon.Visible = true;
         }

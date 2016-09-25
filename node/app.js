@@ -17,7 +17,7 @@ app.use(express.static(path.join(__dirname, 'views')));
 
 // Serve files
 app.get('/', function(req, res){
-  res.sendfile('views/interface.html')
+    res.sendfile('views/interface.html');
 });
 
 // API access
