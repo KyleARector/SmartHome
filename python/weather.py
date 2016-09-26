@@ -1,5 +1,8 @@
 import requests
 import time
+import redis
+
+db = redis.StrictRedis(host='localhost', port=4747, db=0)
 
 base_url = "https://api.darksky.net/forecast/key_long_lat"
 
@@ -9,9 +12,15 @@ data = requests.get(base_url)
 
 spec_data = data.json()
 weather_data = spec_data["currently"]["summary"]
+outside_temp = spec_data["currently"]["temperature"]
+apparent_temp = spec_data["currently"]["apparentTemperature"]
 sunrise = spec_data["daily"]["data"][0]["sunriseTime"]
 sunset = spec_data["daily"]["data"][0]["sunsetTime"]
 now = time.time()
+
+db.set("weatherTemp", outside_temp)
+db.set("weatherFeelTemp", apparent_temp)
+db.set("weatherConditions", weather_data)
 
 if weather_data == "Heavy Rain":
     # Color: Blue
