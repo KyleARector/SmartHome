@@ -1,7 +1,7 @@
 # SmartHome
 The Interface, Services, and Infrastructure for our Raspberry Pi powered Smart Home.
 
-You can view the progress and upgrades on this project on [Trello](https://trello.com/b/tEcFP1E7/smart-home-customization)
+You can view the progress and upgrades on this project on [Trello](https://trello.com/b/tEcFP1E7/smart-home-customization).
 
 # Features
 - Automatic integration (Query fuel level and cost)
@@ -13,6 +13,7 @@ You can view the progress and upgrades on this project on [Trello](https://trell
 - Local temperature sensing
 - Slack integration (Query above resources and control devices)
 - Responsive web interface (Display state of and control devices)
+- Amazon Echo integration ([PythonEchoBridge](https://github.com/KyleARector/PythonEchoBridge))
 
 # To Do
 - Web interface improvements
@@ -20,4 +21,4 @@ You can view the progress and upgrades on this project on [Trello](https://trell
 - Sensor History
 - Kinect Voice Recognition (Windows Service)
 - Kinect Gesture Commands (Windows Service)
-- HTTPS
+- Bluetooth presence detection
