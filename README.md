@@ -22,3 +22,4 @@ You can view the progress and upgrades on this project on [Trello](https://trell
 - Kinect Voice Recognition (Windows Service)
 - Kinect Gesture Commands (Windows Service)
 - Bluetooth presence detection
+- IR Blaster
