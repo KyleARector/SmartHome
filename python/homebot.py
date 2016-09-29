@@ -4,7 +4,6 @@ import requests
 import redis
 from slackclient import SlackClient
 from automatic import AutomaticInterface
-from smartthings import SmartThingsInterface
 from todoist import TodoistInterface
 # from langinterface import LanguageInterface
 
@@ -16,7 +15,6 @@ infile.close()
 
 slack = SlackClient(config["slack"]["access_token"])
 auto = AutomaticInterface(config["automatic"])
-smartthing = SmartThingsInterface(config["smartthings"])
 todo = TodoistInterface(config["todoist"])
 
 sphereAddr = compAddr = tempAddr = "http://localhost"
@@ -26,8 +24,14 @@ for item in config["local"]["sensors"]:
         sphereAddr = item["address"]
     elif item["sensor_name"] == "comp_relay":
         compAddr = item["address"]
-    elif item["sensor_name"] == "temp_sensor":
-        tempAddr = item["address"]
+
+sensors = []
+sensors_data = db.lrange("sensors", 0, -1)
+for sensor in sensors_data:
+    sensor = json.loads(sensor)
+    data = {"name": sensor["name"], "function": sensor["function"]}
+    sensors.append(data)
+
 
 if slack.rtm_connect():
     while True:
@@ -48,10 +52,25 @@ if slack.rtm_connect():
                 elif "hey" in item["text"].lower() or "hello" in item["text"].lower():
                     slack.rtm_send_message(item["channel"], "Hello! How are you?")
                 elif "home" in item["text"].lower() and "status" in item["text"].lower():
-                    sensor_data = smartthing.get("sensors")
                     message = "Here's your home status:\n"
-                    for sensor in sensor_data:
-                        message += " - " + sensor["name"] + " is " + sensor["value"] + "\n"
+                    for sensor in sensors:
+                        state = "off"
+                        if sensor["function"] in ["switch", "dimmer"]:
+                            if db.get(sensor["name"]) == "True":
+                                state = "on"
+                            else:
+                                state = "off"
+                        elif sensor["function"] in ["motion"]:
+                            if db.get(sensor["name"]) == "True":
+                                state = "active"
+                            else:
+                                state = "inactive"
+                        elif sensor["function"] in ["contact"]:
+                            if db.get(sensor["name"]) == "True":
+                                state = "open"
+                            else:
+                                state = "closed"
+                        message += " - " + sensor["name"] + " is " + state + "\n"
                     slack.rtm_send_message(item["channel"], message)
                 elif "plex" in item["text"].lower() or "computer" in item["text"].lower():
                     if "on" in item["text"].lower():
@@ -80,25 +99,13 @@ if slack.rtm_connect():
                         r = requests.get(sphereAddr + ":8080/sphere?color=white")
                     data = r.json()
                     slack.rtm_send_message(item["channel"], "Turning the sphere " + data["status"])
-                elif "temperature" in item["text"].lower() or "temp" in item["text"].lower():
-                    r = requests.get(tempAddr)
-                    data = r.json()
-                    message = "It is " + str(data["variables"]["inTempInt"]) + " degrees inside, and " + \
-                              str(data["variables"]["outTempInt"]) + " degrees outside"
+                elif "weather" in item["text"].lower():
+                    current_temp = db.get("weatherTemp")
+                    feels_like = db.get("weatherFeelTemp")
+                    conditions = db.get("weatherConditions")
+                    message = "It is " + current_temp + " degrees outside, and it feels like " + \
+                              feels_like + " degrees. The weather conditions are " + conditions.lower()
                     slack.rtm_send_message(item["channel"], message)
-                elif "thermostat" in item["text"].lower():
-                    if "what" in item["text"].lower():
-                        setTemp = db.get("Thermostat")
-                        message = "The thermostat is set to " + setTemp + " degrees"
-                        slack.rtm_send_message(item["channel"], message)
-                    else:
-                        tempString = item["text"].lower()
-                        tempString = tempString[-2:]
-                        if tempString.isdigit():
-                            tempChange = int(tempString)
-                            db.set("tempChange", tempChange)
-                            message = "Setting the thermostat to " + tempString + " degrees"
-                            slack.rtm_send_message(item["channel"], message)
                 elif "to do" in item["text"].lower() or "todo" in item["text"].lower():
                     task_list = todo.get_today_tasks()
                     task_count = len(task_list)
@@ -112,12 +119,6 @@ if slack.rtm_connect():
                         for task in task_list:
                             message += " - " + task + "\n"
                     slack.rtm_send_message(item["channel"], message)
-                elif "3d printer" in item["text"].lower():
-                    if "on" in item["text"].lower():
-                        command = "True"
-                    else:
-                        command = "False"
-                    db.lpush("sensor_changes", "{\"name\": \"3D Printer\", \"state\": \"" + command + "\"}")
         # Check for notifications
         if db.llen("notifications") > 0:
             message = ""
