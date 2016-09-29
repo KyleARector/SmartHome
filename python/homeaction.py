@@ -34,7 +34,13 @@ while True:
             for known_sensor in zwave_sensors:
                 if sensor["name"] == known_sensor["name"]:
                     zstick.switch(known_sensor["node_id"], sensor["state"], known_sensor["function"])
-                    db.set(sensor["name"], sensor["state"])
+                    state = sensor["state"]
+                    if state.isdigit():
+                        if state > 0:
+                            state = "True"
+                        else:
+                            state = "False"
+                    db.set(sensor["name"], state)
                     break
             for known_sensor in wifi_sensors:
                 if sensor["name"] == known_sensor["name"]:
