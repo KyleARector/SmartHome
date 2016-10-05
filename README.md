@@ -23,3 +23,4 @@ You can view the progress and upgrades on this project on [Trello](https://trell
 - Kinect Gesture Commands (Windows Service)
 - Bluetooth presence detection
 - IR Blaster
+- WeMo Integration
