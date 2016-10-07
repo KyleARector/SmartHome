@@ -1,6 +1,8 @@
 import redis
 import json
 import requests
+import time
+import datetime
 from zwave import ZStickInterface
 
 db = redis.StrictRedis(host='localhost', port=4747, db=0)
@@ -41,17 +43,23 @@ while True:
                         else:
                             state = "False"
                     db.set(sensor["name"], state)
+                    curr_time = datetime.datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %H:%M:%S")
+                    db.rpush(sensor["name"] + " history", str(state) + " - " + curr_time)
                     break
             for known_sensor in wifi_sensors:
                 if sensor["name"] == known_sensor["name"]:
                     if sensor["state"] != db.get(sensor["name"]):
                         r = requests.get(known_sensor["address"] + "/relay")
                         db.set(sensor["name"], sensor["state"])
-                    break
+                        curr_time = datetime.datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %H:%M:%S")
+                        db.rpush(sensor["name"] + " history", str(sensor["state"]) + " - " + curr_time)
+                        break
     for item in zstick.get_sensor_events():
         for known_sensor in zwave_sensors:
             if item["node_id"] == known_sensor["node_id"]:
                 db.set(known_sensor["name"], item["state"])
+                curr_time = datetime.datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %H:%M:%S")
+                db.rpush(known_sensor["name"] + " history", str(item["state"]) + " - " + curr_time)
                 break
 
 
