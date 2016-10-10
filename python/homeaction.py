@@ -44,7 +44,8 @@ while True:
                             state = "False"
                     db.set(sensor["name"], state)
                     curr_time = datetime.datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %H:%M:%S")
-                    db.rpush(sensor["name"] + " history", str(state) + " - " + curr_time)
+                    db.lpush(sensor["name"] + " history", str(state) + " - " + curr_time)
+                    db.ltrim(sensor["name"] + " history", 0, 99)
                     break
             for known_sensor in wifi_sensors:
                 if sensor["name"] == known_sensor["name"]:
@@ -52,14 +53,16 @@ while True:
                         r = requests.get(known_sensor["address"] + "/relay")
                         db.set(sensor["name"], sensor["state"])
                         curr_time = datetime.datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %H:%M:%S")
-                        db.rpush(sensor["name"] + " history", str(sensor["state"]) + " - " + curr_time)
+                        db.lpush(sensor["name"] + " history", str(sensor["state"]) + " - " + curr_time)
+                        db.ltrim(sensor["name"] + " history", 0, 99)
                         break
     for item in zstick.get_sensor_events():
         for known_sensor in zwave_sensors:
             if item["node_id"] == known_sensor["node_id"]:
                 db.set(known_sensor["name"], item["state"])
                 curr_time = datetime.datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %H:%M:%S")
-                db.rpush(known_sensor["name"] + " history", str(item["state"]) + " - " + curr_time)
+                db.lpush(known_sensor["name"] + " history", str(item["state"]) + " - " + curr_time)
+                db.ltrim(known_sensor["name"] + " history", 0, 99)
                 break
 
 
