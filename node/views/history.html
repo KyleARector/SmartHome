@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Device History</title>
+        <meta name="description" content="Device History">
+        <meta name="author" content="KyleARector">
+        <script type="text/javascript" src="/js/jquery-2.0.3.min.js"></script>
+        <script type="text/javascript">
+          window.onload = function(){
+              var json = JSON.parse(getURL("/sensors"));
+              for (var i = 0, len = json.length; i < len; i++) {
+                if (json[i]["function"] == "switch" ||  json[i]["function"] == "dimmer" || json[i]["function"] == "motion" || json[i]["function"] == "contact") {
+                  createOption(document.getElementById("deviceSelection"), json[i]["name"]);
+                }
+            }
+          }
+
+          function createOption(context, name){
+            var option = document.createElement("option");
+            option.textContent = name;
+            option.value = name;
+            context.appendChild(button);
+          }​
+        </script>
+    </head>
+    <body>
+        <select id="deviceSelection">
+        </select>
+    </body>
+</html>
