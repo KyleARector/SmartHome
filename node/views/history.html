@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
     <head>
         <meta charset="utf-8">
@@ -6,22 +6,29 @@
         <meta name="description" content="Device History">
         <meta name="author" content="KyleARector">
         <script type="text/javascript" src="/js/jquery-2.0.3.min.js"></script>
-        <script type="text/javascript">
-          window.onload = function(){
-              var json = JSON.parse(getURL("/sensors"));
-              for (var i = 0, len = json.length; i < len; i++) {
-                if (json[i]["function"] == "switch" ||  json[i]["function"] == "dimmer" || json[i]["function"] == "motion" || json[i]["function"] == "contact") {
-                  createOption(document.getElementById("deviceSelection"), json[i]["name"]);
+        <script>
+            window.onload = function () {
+                var json = JSON.parse(getURL("/sensors"));
+                for (var i = 0, len = json.length; i < len; i++) {
+                    if (json[i]["function"] == "switch" || json[i]["function"] == "dimmer" || json[i]["function"] == "motion" || json[i]["function"] == "contact") {
+                        createOption(document.getElementById("deviceSelection"), json[i]["name"]);
+                    }
                 }
             }
-          }
 
-          function createOption(context, name){
-            var option = document.createElement("option");
-            option.textContent = name;
-            option.value = name;
-            context.appendChild(button);
-          }​
+            function getURL(url) {
+                var req = new XMLHttpRequest();
+                req.open("GET", url, false);
+                req.send(null);
+                return req.responseText;
+            }
+
+            function createOption(context, name) {
+                var option = document.createElement("option");
+                option.textContent = name;
+                option.value = name;
+                context.appendChild(option);
+            }
         </script>
     </head>
     <body>

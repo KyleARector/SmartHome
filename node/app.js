@@ -20,6 +20,10 @@ app.get('/', function(req, res){
     res.sendfile('views/interface.html');
 });
 
+app.get('/history', function (req, res) {
+    res.sendfile('views/history.html');
+});
+
 // API access
 app.get('/sensorState', function getState(req, res, next) {
   if(req.query.sensor){
@@ -46,6 +50,19 @@ app.get('/toggleSwitch', function toggleSwitch(req, res) {
   else {
     res.json("Incorrect Parameters");
   }
+});
+
+app.get('/sensorHistory', function getSensors(req, res) {
+    if (req.query.sensor) {
+        var sensor = req.query.sensor;
+        client.lrange(sensor + " history", 0, -1, function (error, items) {
+            histList = [];
+            items.forEach(function (item) {
+                histList.push(item);
+            });
+            res.json(histList);
+        });
+    }
 });
 
 app.get('/sensors', function getSensors(req, res) {
