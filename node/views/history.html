@@ -16,23 +16,41 @@
                 }
             }
 
-            function getURL(url) {
-                var req = new XMLHttpRequest();
-                req.open("GET", url, false);
-                req.send(null);
-                return req.responseText;
-            }
-
             function createOption(context, name) {
                 var option = document.createElement("option");
                 option.textContent = name;
                 option.value = name;
                 context.appendChild(option);
             }
+
+            function loadDeviceHistory() {
+                var table = document.getElementById("historyTable");
+                table.innerHTML = "";
+                var select = document.getElementById("deviceSelection");
+                var name = select.options[select.selectedIndex].text;
+                var histString = getURL("/sensorHistory?sensor=" + name);
+                histString = histString.replace(/"/g,"");
+                var histArray = histString.slice(1, -1).split(",");
+                for (var i = 0, len = histArray.length; i < len; i++) {
+                    var tr = table.insertRow(i);
+                    var cell = tr.insertCell(0);
+                    cell.innerHTML = histArray[i];
+                }
+            }
+
+            function getURL(url) {
+                var req = new XMLHttpRequest();
+                req.open("GET", url, false);
+                req.send(null);
+                return req.responseText;
+            }
         </script>
     </head>
     <body>
         <select id="deviceSelection">
         </select>
+        <button onclick="loadDeviceHistory()">Load</button>
+        <table id="historyTable">
+        </table>
     </body>
 </html>

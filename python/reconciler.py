@@ -25,4 +25,3 @@ while True:
         if state != db.get(sensor["name"]):
             db.set(sensor["name"], state)
     time.sleep(1)
-
