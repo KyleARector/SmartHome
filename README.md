@@ -14,13 +14,14 @@ You can view the progress and upgrades on this project on [Trello](https://trell
 - Slack integration (Query above resources and control devices)
 - Responsive web interface (Display state of and control devices)
 - Amazon Echo integration ([PythonEchoBridge](https://github.com/KyleARector/PythonEchoBridge))
+- Sensor History
 
 # To Do
 - Web interface improvements
 - Rule Engine
-- Sensor History
 - Kinect Voice Recognition (Windows Service)
 - Kinect Gesture Commands (Windows Service)
 - Bluetooth presence detection
 - IR Blaster
-- WeMo Integration
+- WeMo Discovery/Integration
+- Philips Hue Discovery/Integration
