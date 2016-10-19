@@ -5,65 +5,99 @@ import time
 import datetime
 from zwave import ZStickInterface
 
+# Set up database connection
 db = redis.StrictRedis(host='localhost', port=4747, db=0)
 
+# Initialize Z-wave network
 zstick = ZStickInterface()
 
+# Initialize sensor lists
 zwave_sensors = []
 wifi_sensors = []
 
+# Query database for sensors and sort into lists by type
 sensors = db.lrange("sensors", 0, -1)
 for sensor in sensors:
     sensor = json.loads(sensor)
     if sensor["type"] == "zwave":
-        data = {"name": sensor["name"], "node_id": sensor["node_id"], "function": sensor["function"]}
+        data = {"name": sensor["name"], "node_id": sensor["node_id"],
+                "function": sensor["function"]}
         zwave_sensors.append(data)
     elif sensor["type"] == "wifi":
-        data = {"name": sensor["name"], "address": sensor["address"], "function": sensor["function"]}
+        data = {"name": sensor["name"], "address": sensor["address"],
+                "function": sensor["function"]}
         wifi_sensors.append(data)
 
+# Query database for sensor Changes
+# Loop constantly
 while True:
+    # Check size of sensor changes lists
+    # If 0, do nothing
     size = db.llen("sensor_changes")
     if size > 0:
+        # Loop through queried sensor changes
         for index in range(0, size):
+            # Try parsing the JSON record of sensor change
+            # If successful, continue, if not remove the item from the list
             # Currently only addresses "switch" and "dimmer" function sensors
             try:
                 sensor = json.loads(db.lindex("sensor_changes", index))
-                db.lrem("sensor_changes", 1, db.lindex("sensor_changes", index))
+                db.lrem("sensor_changes", 1,
+                        db.lindex("sensor_changes", index))
             except:
-                db.lrem("sensor_changes", 1, db.lindex("sensor_changes", index))
+                db.lrem("sensor_changes", 1,
+                        db.lindex("sensor_changes", index))
                 break
+            # Check sensor against known Z-wave sensors
             for known_sensor in zwave_sensors:
                 if sensor["name"] == known_sensor["name"]:
-                    zstick.switch(known_sensor["node_id"], sensor["state"], known_sensor["function"])
+                    # Set the switch/dimmer to the requested state
+                    zstick.switch(known_sensor["node_id"], sensor["state"],
+                                  known_sensor["function"])
                     state = sensor["state"]
+                    # If dimmer value set, correlate value to on/off state
+                    # 0 is off, andthing above is on
                     if state.isdigit():
                         if state > 0:
                             state = "True"
                         else:
                             state = "False"
+                    # Record the state in the database
                     db.set(sensor["name"], state)
+                    # Get current time and push to database for history
                     curr_time = datetime.datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %H:%M:%S")
-                    db.lpush(sensor["name"] + " history", str(state) + " - " + curr_time)
+                    db.lpush(sensor["name"] + " history", str(state) + " - " +
+                             curr_time)
                     db.ltrim(sensor["name"] + " history", 0, 99)
                     break
+            # Check sensor against known wifi sensors
+            # Currently supports on/off relays
             for known_sensor in wifi_sensors:
                 if sensor["name"] == known_sensor["name"]:
                     if sensor["state"] != db.get(sensor["name"]):
                         r = requests.get(known_sensor["address"] + "/relay")
+                        # Record the state in the database
                         db.set(sensor["name"], sensor["state"])
+                        # Get current time and push to database for history
                         curr_time = datetime.datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %H:%M:%S")
-                        db.lpush(sensor["name"] + " history", str(sensor["state"]) + " - " + curr_time)
+                        db.lpush(sensor["name"] + " history",
+                                 str(sensor["state"]) + " - " + curr_time)
                         db.ltrim(sensor["name"] + " history", 0, 99)
                         break
+    # Query Z-wave interface for non-interactive sensor changes
+    # This includes changes from contact and motion sensors
+    # Currently supports only Z-wave, only checks against known Z-wave sensors
     for item in zstick.get_sensor_events():
         for known_sensor in zwave_sensors:
             if item["node_id"] == known_sensor["node_id"]:
+                # Record the state in the database
                 db.set(known_sensor["name"], item["state"])
+                # Get current time and push to database for history
                 curr_time = datetime.datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %H:%M:%S")
-                db.lpush(known_sensor["name"] + " history", str(item["state"]) + " - " + curr_time)
+                db.lpush(known_sensor["name"] + " history",
+                         str(item["state"]) + " - " + curr_time)
                 db.ltrim(known_sensor["name"] + " history", 0, 99)
                 break
 
-
+# If loop exits, stop Z-wave network
 zstick.stop_network()
