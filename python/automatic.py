@@ -90,5 +90,5 @@ def main():
     out = test.get_fuel_cost(car)
     print out
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -2,7 +2,7 @@ import requests
 
 
 class WeMoInterface(object):
-    def __init__(self, config):
+    def __init__(self):
         self.headers = {"content-type": "text/xml; charset=utf-8",
                         "SOAPACTION": "\"urn:Belkin:service:basicevent:1#GetBinaryState\"",
                         "accept": ""}
@@ -28,3 +28,6 @@ class WeMoInterface(object):
         req = requests.post(url, data=body, headers=self.headers)
         data = req.content
         return data
+
+    # Static method? Return list of addresses?
+    def discover(self):
