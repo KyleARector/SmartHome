@@ -15,6 +15,7 @@ You can view the progress and upgrades on this project on [Trello](https://trell
 - Responsive web interface (Display state of and control devices)
 - Amazon Echo integration ([PythonEchoBridge](https://github.com/KyleARector/PythonEchoBridge))
 - Sensor History
+- IR/WiFi Bridge for TV control
 
 # To Do
 - Web interface improvements
@@ -22,6 +23,5 @@ You can view the progress and upgrades on this project on [Trello](https://trell
 - Kinect Voice Recognition (Windows Service)
 - Kinect Gesture Commands (Windows Service)
 - Bluetooth presence detection
-- IR Blaster
 - WeMo Discovery/Integration
 - Philips Hue Discovery/Integration
