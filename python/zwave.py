@@ -14,11 +14,13 @@ class ZStickInterface(object):
     def __init__(self):
         self.sensor_events = []
         self.device = "/dev/ttyACM0"
+        config_path = "plugins/python-openzwave/openzwave/config"
+        user_path = "plugins/python-openzwave/config"
         # If using older Z-sticks, use the below device:
         # self.device = "/dev/ttyUSB0"
         # Change config paths where appropriate
-        self.options = ZWaveOption(self.device, config_path="plugins/python-openzwave/openzwave/config",
-                                   user_path="plugins/python-openzwave/config", cmd_line="")
+        self.options = ZWaveOption(self.device, config_path=config_path,
+                                   user_path=user_path, cmd_line="")
         # Turn off ozw console output
         self.options.set_console_output(False)
         self.options.set_save_log_level("Info")
@@ -30,12 +32,12 @@ class ZStickInterface(object):
         self.manager.addWatcher(self.event_callback)
         self.manager.addDriver(self.device)
 
-        print("Starting Network...")
+        print("Starting Z-Wave Network...")
         self.network = ZWaveNetwork(self.options, log=None)
         # Wait for network to start
         while not self.network.state >= self.network.STATE_AWAKED:
             time.sleep(1)
-        print("Network Started")
+        print("Z-Wave Network Started")
 
     def toggle_switch(self, node_id):
         try:

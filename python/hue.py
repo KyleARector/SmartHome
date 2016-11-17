@@ -9,8 +9,16 @@ class HueInterface(object):
 
     # Discover new Hue bulbs and return list of ID, name, and type
     # Static method? Return list of addresses?
+    # Discover Hue bridges on instantiation of class?
     def discover(self):
         hue_bulbs = []
+        req = requests.get(self.endpt + self.username + "/lights")
+        response = req.json()
+        for item in response.keys():
+            data = "{\"name\": \"" + response[item]["name"] + \
+                   "\", \"type\": \"hue\", \"function\": \"switch\", " + \
+                   "\"id\": " + item + "}"
+            hue_bulbs.append(data)
         return hue_bulbs
 
     # Convert hex color codes to hue/saturation value
@@ -25,7 +33,7 @@ class HueInterface(object):
         return True
 
     # Send on/off command to specific light
-    def light_on_off(self, state, id):
+    def light_on_off(self, id, state):
         # If the state is true, the value to be set is true
         if state:
             value = "true"
@@ -36,8 +44,8 @@ class HueInterface(object):
         data = {"on": value}
 
         # Send the request to the Hue bridge
-        req = requests.put(self.endpt + self.username + "/" + "lights/" + id,
-                           json=data)
+        req = requests.put(self.endpt + self.username + "/" + "lights/" +
+                           str(id), json=data)
 
 
 def main():
@@ -47,9 +55,10 @@ def main():
     # Perform POST request to retrieve username
     # username = result of post
     username = "newdeveloper"
+    address = "127.0.0.1"
 
     # Instantiate class
-    hue = HueInterface(username)
+    hue = HueInterface(username, address)
 
 if __name__ == "__main__":
     main()
