@@ -54,6 +54,8 @@ def log_sensor_history(sensor_name, sensor_state):
 
 # Query database for sensor Changes
 # Loop constantly
+# Way to do this with subscription or callback?
+# Oh, lord, should this be event based and in JavaScript?
 while True:
     # Check size of sensor changes lists
     # If 0, do nothing
@@ -91,7 +93,7 @@ while True:
                     log_sensor_history(sensor["name"], str(state))
                     break
             # Check sensor against known wifi sensors
-            # Currently supports on/off relays
+            # Currently supports relays/IR blasters disguised as relays...
             for known_sensor in wifi_sensors:
                 if sensor["name"] == known_sensor["name"]:
                     if sensor["state"] != db.get(sensor["name"]):
@@ -114,6 +116,7 @@ while True:
             for known_sensor in hue_sensors:
                 if sensor["name"] == known_sensor["name"]:
                     hue.light_on_off(known_sensor["id"], sensor["state"])
+                    db.set(known_sensor["name"], sensor["state"])
                     log_sensor_history(known_sensor["name"],
                                        str(sensor["state"]))
                     break
@@ -128,6 +131,7 @@ while True:
                 db.set(known_sensor["name"], item["state"])
                 log_sensor_history(known_sensor["name"], str(item["state"]))
                 break
+    time.sleep(0.01)
 
 # If loop exits, stop Z-wave network
 zstick.stop_network()

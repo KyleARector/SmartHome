@@ -34,18 +34,12 @@ class HueInterface(object):
 
     # Send on/off command to specific light
     def light_on_off(self, id, state):
-        # If the state is true, the value to be set is true
-        if state:
-            value = "true"
-        else:
-            value = "false"
-
         # Create payload to send to bridge
-        data = {"on": value}
+        data = {"on": state}
 
         # Send the request to the Hue bridge
-        req = requests.put(self.endpt + self.username + "/" + "lights/" +
-                           str(id), json=data)
+        req = requests.put(self.endpt + self.username + "/lights/" +
+                           str(id) + "/state", json=data)
 
 
 def main():
