@@ -47,10 +47,9 @@ for sensor in sensors:
 # Arguments are the sensor's name and the state to write to history
 def log_sensor_history(sensor_name, sensor_state):
     curr_time = datetime.datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %H:%M:%S")
-    if (db.get(sensor_name) != sensor_state):
-        db.lpush(sensor_name + " history", sensor_state + " - " +
-                 curr_time)
-        db.ltrim(sensor_name + " history", 0, 149)
+    db.lpush(sensor_name + " history", sensor_state + " - " +
+             curr_time)
+    db.ltrim(sensor_name + " history", 0, 149)
 
 # Query database for sensor Changes
 # Loop constantly
@@ -77,49 +76,57 @@ while True:
             # Check sensor against known Z-wave sensors
             for known_sensor in zwave_sensors:
                 if sensor["name"] == known_sensor["name"]:
-                    # Set the switch/dimmer to the requested state
-                    zstick.switch(known_sensor["node_id"], sensor["state"],
-                                  known_sensor["function"])
-                    state = sensor["state"]
-                    # If dimmer value set, correlate value to on/off state
-                    # 0 is off, anything above is on
-                    if state.isdigit():
-                        if state > 0:
-                            state = "True"
-                        else:
-                            state = "False"
-                    # Record the state in the database
-                    db.set(sensor["name"], state)
-                    log_sensor_history(sensor["name"], str(state))
-                    break
+                    # Prevent duplicate records
+                    if sensor["state"] != db.get(sensor["name"]):
+                        # Set the switch/dimmer to the requested state
+                        zstick.switch(known_sensor["node_id"], sensor["state"],
+                                      known_sensor["function"])
+                        state = sensor["state"]
+                        # If dimmer value set, correlate value to on/off state
+                        # 0 is off, anything above is on
+                        if state.isdigit():
+                            if state > 0:
+                                state = "True"
+                            else:
+                                state = "False"
+                        # Record the state in the database
+                        db.set(sensor["name"], state)
+                        log_sensor_history(sensor["name"], str(state))
+                        break
             # Check sensor against known wifi sensors
             # Currently supports relays/IR blasters disguised as relays...
             for known_sensor in wifi_sensors:
                 if sensor["name"] == known_sensor["name"]:
+                    # Prevent duplicate records
                     if sensor["state"] != db.get(sensor["name"]):
-                        # Try to send an HTTP request to the device
-                        # Only set state if request is successful
-                        # Should add verification from Arduino response
-                        try:
-                            r = requests.get(known_sensor["address"] +
-                                             "/relay")
-                            # Record the state in the database
-                            db.set(sensor["name"], sensor["state"])
-                            log_sensor_history(sensor["name"],
-                                               str(sensor["state"]))
-                        except:
-                            pass
-                        break
+                        # Do not send "Dim" requests to Wifi Sensors
+                        # Want to handle this differently in the future
+                        if not sensor["state"].isdigit():
+                            # Try to send an HTTP request to the device
+                            # Only set state if request is successful
+                            # Should add verification from Arduino response
+                            try:
+                                r = requests.get(known_sensor["address"] +
+                                                 "/relay")
+                                # Record the state in the database
+                                db.set(sensor["name"], sensor["state"])
+                                log_sensor_history(sensor["name"],
+                                                   str(sensor["state"]))
+                            except:
+                                pass
+                            break
             # Check against known Hue bulbs
             # Currently supports on/off of lights
             # Will support color/dimming
             for known_sensor in hue_sensors:
                 if sensor["name"] == known_sensor["name"]:
-                    hue.light_on_off(known_sensor["id"], sensor["state"])
-                    db.set(known_sensor["name"], sensor["state"])
-                    log_sensor_history(known_sensor["name"],
-                                       str(sensor["state"]))
-                    break
+                    # Prevent duplicate records
+                    if sensor["state"] != db.get(sensor["name"]):
+                        hue.light_on_off(known_sensor["id"], sensor["state"])
+                        db.set(known_sensor["name"], sensor["state"])
+                        log_sensor_history(known_sensor["name"],
+                                           str(sensor["state"]))
+                        break
     # Query Z-wave interface for non-interactive sensor changes
     # This includes changes from contact and motion sensors
     # Needs to support power level, etc
@@ -127,10 +134,12 @@ while True:
     for item in zstick.get_sensor_events():
         for known_sensor in zwave_sensors:
             if item["node_id"] == known_sensor["node_id"]:
-                # Record the state in the database
-                db.set(known_sensor["name"], item["state"])
-                log_sensor_history(known_sensor["name"], str(item["state"]))
-                break
+                # Prevent duplicate records
+                if item["state"] != db.get(known_sensor["name"]):
+                    # Record the state in the database
+                    db.set(known_sensor["name"], item["state"])
+                    log_sensor_history(known_sensor["name"], str(item["state"]))
+                    break
     time.sleep(0.01)
 
 # If loop exits, stop Z-wave network
