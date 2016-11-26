@@ -21,6 +21,12 @@ class HueInterface(object):
             hue_bulbs.append(data)
         return hue_bulbs
 
+    # Return a list of all lights, without formatting
+    def get_lights(self):
+        hue_bulbs = {}
+        req = requests.get(self.endpt + self.username + "/lights")
+        return req.json()
+
     # Convert hex color codes to hue/saturation value
     def hex_to_hue_sat(self, hex):
         hue_spec = {"hue": 0, "sat": 0}
@@ -35,7 +41,10 @@ class HueInterface(object):
     # Send on/off command to specific light
     def light_on_off(self, id, state):
         # Create payload to send to bridge
-        data = {"on": state}
+        if state == "True":
+            data = {"on": True}
+        else:
+            data = {"on": False}
 
         # Send the request to the Hue bridge
         req = requests.put(self.endpt + self.username + "/lights/" +

@@ -1,27 +1,24 @@
 import time
 import json
 import redis
-from smartthings import SmartThingsInterface
+from hue import HueInterface
 
 db = redis.StrictRedis(host='localhost', port=4747, db=0)
 
-infile = open("config.json", "r")
-config = json.load(infile)
-infile.close()
-
-smartthing = SmartThingsInterface(config["smartthings"])
+hue = HueInterface(db.get("hue_username"), db.get("hue_address"))
 
 while True:
     try:
-        sensor_data = smartthing.get("sensors")
+        sensor_data = hue.get_lights()
     except:
         print "Error getting data"
-        sensor_data = []
-    for sensor in sensor_data:
-        if sensor["value"] in ("on", "active", "open", "present"):
+        sensor_data = {}
+    for item in sensor_data.keys():
+        sensor_data[item]["name"]
+        if sensor_data[item]["state"]["on"]:
             state = "True"
         else:
             state = "False"
-        if state != db.get(sensor["name"]):
-            db.set(sensor["name"], state)
+        if state != db.get(sensor_data[item]["name"]):
+            db.set(sensor_data[item]["name"], state)
     time.sleep(1)

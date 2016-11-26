@@ -17,7 +17,7 @@ hue = HueInterface(db.get("hue_username"), db.get("hue_address"))
 # Need to check if sensors already exist in database
 # Remove items that are in db but not in recent discovery
 '''hue_data = hue.discover()
-for item in data:
+for item in hue_data:
     db.rpush("sensors", item)'''
 
 # Initialize sensor lists
@@ -122,6 +122,7 @@ while True:
                 if sensor["name"] == known_sensor["name"]:
                     # Prevent duplicate records
                     if sensor["state"] != db.get(sensor["name"]):
+                        print sensor["state"]
                         hue.light_on_off(known_sensor["id"], sensor["state"])
                         db.set(known_sensor["name"], sensor["state"])
                         log_sensor_history(known_sensor["name"],
