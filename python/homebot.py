@@ -41,12 +41,14 @@ if slack.rtm_connect():
                 if "gas" in item["text"].lower() or "fuel" in item["text"].lower():
                     if "ford" in item["text"].lower():
                         auto_data = auto.get_fuel_cost("Ford")
-                        message = "It would cost " + str(auto_data["cost"]) + " to fill up " + \
+                        message = "It would cost " + str(auto_data["cost"]) + \
+                                  " to fill up " + \
                                   str(auto_data["empty_vol"]) + " gallons"
                         slack.rtm_send_message(item["channel"], message)
                     elif "mazda" in item["text"].lower():
                         auto_data = auto.get_fuel_cost("Mazda")
-                        message = "It would cost " + str(auto_data["cost"]) + " to fill up " + \
+                        message = "It would cost " + str(auto_data["cost"]) + \
+                                  " to fill up " + \
                                   str(auto_data["empty_vol"]) + " gallons"
                         slack.rtm_send_message(item["channel"], message)
                 elif "hey" in item["text"].lower() or "hello" in item["text"].lower():
@@ -103,18 +105,25 @@ if slack.rtm_connect():
                     current_temp = db.get("weatherTemp")
                     feels_like = db.get("weatherFeelTemp")
                     conditions = db.get("weatherConditions")
-                    message = "It is " + current_temp + " degrees outside, and it feels like " + \
-                              feels_like + " degrees. The weather conditions are " + conditions.lower()
+                    message = "It is " + current_temp + \
+                              " degrees outside, and it feels like " + \
+                              feels_like + \
+                              " degrees. The weather conditions are " + \
+                              conditions.lower()
                     slack.rtm_send_message(item["channel"], message)
                 elif "to do" in item["text"].lower() or "todo" in item["text"].lower():
                     task_list = todo.get_today_tasks()
                     task_count = len(task_list)
-                    message = "There are no tasks remaining on your to do list today"
+                    message = "There are no tasks remaining on your to do " + \
+                              "list today"
                     if task_count != 0:
                         task_qty_word = "task"
                         if task_count > 1:
                             task_qty_word += "s"
-                        message = "You have " + str(task_count) + " " + task_qty_word + \
+                        message = "You have " + \
+                                  str(task_count) + \
+                                  " " + \
+                                  task_qty_word + \
                                   " remaining on your to do list today:\n"
                         for task in task_list:
                             message += " - " + task + "\n"

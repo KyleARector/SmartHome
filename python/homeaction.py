@@ -46,7 +46,9 @@ for sensor in sensors:
 # Get current time and push to database for history
 # Arguments are the sensor's name and the state to write to history
 def log_sensor_history(sensor_name, sensor_state):
-    curr_time = datetime.datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %H:%M:%S")
+    curr_time = datetime.datetime.fromtimestamp(time.time()).strftime("%Y-%m-" +
+                                                                      "%d %H:" +
+                                                                      "%M:%S")
     db.lpush(sensor_name + " history", sensor_state + " - " +
              curr_time)
     db.ltrim(sensor_name + " history", 0, 149)
@@ -122,7 +124,6 @@ while True:
                 if sensor["name"] == known_sensor["name"]:
                     # Prevent duplicate records
                     if sensor["state"] != db.get(sensor["name"]):
-                        print sensor["state"]
                         hue.light_on_off(known_sensor["id"], sensor["state"])
                         db.set(known_sensor["name"], sensor["state"])
                         log_sensor_history(known_sensor["name"],
