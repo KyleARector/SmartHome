@@ -10,7 +10,7 @@
             window.onload = function () {
                 var json = JSON.parse(getURL("/sensors"));
                 for (var i = 0, len = json.length; i < len; i++) {
-                    if (json[i]["function"] == "switch" || json[i]["function"] == "dimmer" || json[i]["function"] == "motion" || json[i]["function"] == "contact") {
+                    if (json[i]["function"] == "switch" || json[i]["function"] == "dimmer" || json[i]["function"] == "motion" || json[i]["function"] == "contact" || json[i]["function"] == "curtain" || json[i]["function"] == "screen") {
                         createOption(document.getElementById("deviceSelection"), json[i]["name"]);
                     }
                 }
