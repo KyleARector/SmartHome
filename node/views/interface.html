@@ -127,7 +127,7 @@
             setInterval(function() {
                 var json = JSON.parse(getURL("/sensors"));
                 for (var i = 0, len = json.length; i < len; i++) {
-                    if (json[i]["function"] == "switch" || json[i]["function"] == "dimmer" || json[i]["function"] == "motion" || json[i]["function"] == "contact" || json[i]["function"] == "curtain") {
+                    if (json[i]["function"] == "switch" || json[i]["function"] == "dimmer" || json[i]["function"] == "motion" || json[i]["function"] == "contact" || json[i]["function"] == "curtain" || json[i]["function"] == "screen") {
                         var state = JSON.parse(getURL("/sensorState?sensor=" + json[i]["name"]));
                         document.getElementById(json[i]["name"]).className = state;
                     }
@@ -137,7 +137,7 @@
             window.onload = function(){
                 var json = JSON.parse(getURL("/sensors"));
                 for (var i = 0, len = json.length; i < len; i++) {
-                    if (json[i]["function"] == "switch" ||  json[i]["function"] == "dimmer" || json[i]["function"] == "motion" || json[i]["function"] == "contact" || json[i]["function"] == "curtain") {
+                    if (json[i]["function"] == "switch" ||  json[i]["function"] == "dimmer" || json[i]["function"] == "motion" || json[i]["function"] == "contact" || json[i]["function"] == "curtain" || json[i]["function"] == "screen") {
                         createButton(document.getElementById("switches"), json[i]["name"]);
                     }
                 }
