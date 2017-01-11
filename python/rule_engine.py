@@ -33,5 +33,3 @@ class RuleEngine(object):
 class Rule(object):
     def __init__(self):
         self.rule = ""
-
-    def parse_rule(self):
