@@ -8,6 +8,7 @@ from openzwave.option import ZWaveOption
 import libopenzwave
 import time
 import json
+from sensor import Sensor
 
 
 class ZStickInterface(object):
@@ -86,6 +87,11 @@ class ZStickInterface(object):
 
     def stop_network(self):
         self.network.stop()
+
+
+class ZWaveSensor(Sensor):
+    def __init__(self):
+        pass
 
 
 def main():

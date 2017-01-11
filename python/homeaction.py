@@ -171,7 +171,8 @@ while True:
                 if item["state"] != db.get(known_sensor["name"]):
                     # Record the state in the database
                     db.set(known_sensor["name"], item["state"])
-                    log_sensor_history(known_sensor["name"], str(item["state"]))
+                    log_sensor_history(known_sensor["name"],
+                                       str(item["state"]))
                     break
     time.sleep(0.01)
 
