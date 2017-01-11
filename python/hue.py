@@ -1,4 +1,5 @@
 import requests
+from sensor import Sensor
 
 
 class HueInterface(object):
@@ -49,6 +50,11 @@ class HueInterface(object):
         # Send the request to the Hue bridge
         req = requests.put(self.endpt + self.username + "/lights/" +
                            str(id) + "/state", json=data)
+
+
+class HueSensor(Sensor):
+    def __init__(self):
+        pass
 
 
 def main():

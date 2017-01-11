@@ -122,6 +122,21 @@ while True:
                                                        str(sensor["state"]))
                                 except:
                                     pass
+                            elif known_sensor["function"] == "screen":
+                                if sensor["state"] == "True":
+                                    command = "D"
+                                else:
+                                    command = "U"
+                                try:
+                                    r = requests.get(known_sensor["address"] +
+                                                     "/screen?command=" +
+                                                     command)
+                                    # Record the state in the database
+                                    db.set(sensor["name"], sensor["state"])
+                                    log_sensor_history(sensor["name"],
+                                                       str(sensor["state"]))
+                                except:
+                                    pass
                             else:
                                 try:
                                     r = requests.get(known_sensor["address"] +
@@ -156,7 +171,8 @@ while True:
                 if item["state"] != db.get(known_sensor["name"]):
                     # Record the state in the database
                     db.set(known_sensor["name"], item["state"])
-                    log_sensor_history(known_sensor["name"], str(item["state"]))
+                    log_sensor_history(known_sensor["name"],
+                                       str(item["state"]))
                     break
     time.sleep(0.01)
 
